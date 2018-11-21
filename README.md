@@ -33,3 +33,5 @@ cd rclnodejs
 git submodule update --init --recursive
 npm install
 ```
+
+* ROS2 Bouncy needs to be install via deb (binary), link is [here](https://index.ros.org/doc/ros2/Linux-Install-Debians/)
