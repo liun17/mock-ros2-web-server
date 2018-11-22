@@ -26,12 +26,19 @@ node -v
 
 
 #### 2) Install RCL Nodejs
+
+* ROS2 Bouncy needs to be install via deb (binary), link is [here](https://index.ros.org/doc/ros2/Linux-Install-Debians/)
+
 ```
 git clone https://github.com/RobotWebTools/rclnodejs
 git checkout bouncy-bolson
 cd rclnodejs
 git submodule update --init --recursive
+```
+
+Source ros2 before npm install `source ~/ros2_dir/install/local_setup.bash`
+
+```
 npm install
 ```
 
-* ROS2 Bouncy needs to be install via deb (binary), link is [here](https://index.ros.org/doc/ros2/Linux-Install-Debians/)
