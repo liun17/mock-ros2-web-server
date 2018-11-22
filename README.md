@@ -22,7 +22,7 @@ nvm use 8.9.4
 node -v
 ```
 
-* Refered to [here](https://www.digitalocean.com/community/tutorials/how-to-install-node-js-on-ubuntu-16-04)
+* Nodejs installation was refered to [here](https://www.digitalocean.com/community/tutorials/how-to-install-node-js-on-ubuntu-16-04)
 
 
 #### 2) Install RCL Nodejs
