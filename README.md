@@ -42,3 +42,8 @@ Source ros2 before npm install `source ~/ros2_dir/install/local_setup.bash`
 npm install
 ```
 
+### Error Faced
+
+* Mainly not recommended to use `develop` branch for rcl nodejs
+* cant `npm install` in ubuntu 16 with `ros2 ardent` binary installed
+* with ros2 bouncy's source being installed, prob still lies, cuz path too long, weird stuff happened
