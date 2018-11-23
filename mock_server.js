@@ -78,7 +78,7 @@ app.use(express.static(__dirname + '/js'));
 // });
 
 
-app.get('/send/', function (req, res) {
+app.get('/send', function (req, res) {
 	console.log("submit /send/ status msg being called!!")
 });
 
