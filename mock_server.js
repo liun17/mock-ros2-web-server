@@ -20,17 +20,24 @@ let patientDevice_msg = rclnodejs.require('patient_device').msg.ServerResponse;
 //	var date = new Date();
 let msg = new String();
 let msg1 = new SestoApiInfo();
-msg1.method = "createAdhocRequest";
-msg1.user_id = 1234;
-msg1.pickup = "";
-msg1.delivery = "";
-msg1.payloads = ["ITEM" + new Date().toISOString()];
-msg1.type = 0;
-msg1.start_time = new Date().toISOString().replace(/T/, ' ').replace(/\..+/, '');
-msg1.delivery_end = 30;
-msg1.agv_id = 0;
-msg1.req_id = 0;
-msg1.requests = []
+
+let deviceID_msg = new String();
+
+let ack_msg = new patientDevice_msg();
+
+
+
+// msg1.method = "createAdhocRequest";
+// msg1.user_id = 1234;
+// msg1.pickup = "";
+// msg1.delivery = "";
+// msg1.payloads = ["ITEM" + new Date().toISOString()];
+// msg1.type = 0;
+// msg1.start_time = new Date().toISOString().replace(/T/, ' ').replace(/\..+/, '');
+// msg1.delivery_end = 30;
+// msg1.agv_id = 0;
+// msg1.req_id = 0;
+// msg1.requests = []
 
 
 
@@ -82,16 +89,17 @@ app.get('/send', function (req, res) {
 	console.log("submit /send/ status msg being called!!")
 });
 
-// app.get('/api/:version', function(req, res) {
-// 	res.send(req.params.version);
-// 	console.log("submit version status msg being called!!")
-// });
+app.get('/ack/:status', function(req, res) {
+	// res.send(req.params.status);
+	ack_msg.status = req.params.status
+	ack_msg.deviceid = "AAAA"
+	publisher.publish(ack_msg);
+	console.log("!!!!!!Reply status to topic as ", req.params.status)
+});
 
 app.listen( 5003 ,function(){
 	console.log("Node Server running at port "+ 5003);
 });
-
-
 
 
 
@@ -116,7 +124,13 @@ rclnodejs.init().then(() => {
 		}	
 	});	
 	
+	node.createSubscription(deviceID_msg, 'caller_id', (msg) => {
+		console.log(`!!!!!!  Received message : ${typeof msg}`, msg.response);
+	});	
+
+
 	const publisher = node.createPublisher(SestoApiInfo, 'task_info');
+	const patientDevice_pub = node.createPublisher(ack_msg, 'call_acknowledgement');
 	
 	console.log("RCL Nodejs Init Successfully!!")
 	
