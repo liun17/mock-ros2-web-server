@@ -35,6 +35,7 @@ var app = express();
 
 
 app.use('/', function (req, res) {
+	console.log("load main page");
 	res.sendFile(__dirname + '/index.html');
 });
 
