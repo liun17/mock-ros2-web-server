@@ -95,32 +95,32 @@ app.listen(app.get('port'),function(){
 
 
 
-// RCL Nodejs Handler
-rclnodejs.init().then(() => {
+// // RCL Nodejs Handler
+// rclnodejs.init().then(() => {
 	
-	const node = rclnodejs.createNode('task_info_ui');
+// 	const node = rclnodejs.createNode('task_info_ui');
 	
-	node.createSubscription(ServerResponse, 'response', (msg) => {
-		console.log(`Received message : ${typeof msg}`, msg.response);
-		var res_msg = JSON.parse(msg.response);
-		if (msg.method == 'createAdhocRequest') {
-			//alert('Request succesfully created with id '+res_msg.req_id);
-			console.log('Request succesfully created with id ' + res_msg.req_id);
-			//msg1.method="getUserReqStates";
-			//msg1.requests[0]=res_msg.req_id;
-			//publisher.publish(msg1);
-		}	
-		else if (msg.method == 'getUserReqStates') {
-			console.log('AGV with id ' + res_msg.states[0].payload_states[0].agv_id + 'is assigned');
-			console.log('Task state is ' + res_msg.states[0].payload_states[0].state);
-		}	
-	});	
+// 	node.createSubscription(ServerResponse, 'response', (msg) => {
+// 		console.log(`Received message : ${typeof msg}`, msg.response);
+// 		var res_msg = JSON.parse(msg.response);
+// 		if (msg.method == 'createAdhocRequest') {
+// 			//alert('Request succesfully created with id '+res_msg.req_id);
+// 			console.log('Request succesfully created with id ' + res_msg.req_id);
+// 			//msg1.method="getUserReqStates";
+// 			//msg1.requests[0]=res_msg.req_id;
+// 			//publisher.publish(msg1);
+// 		}	
+// 		else if (msg.method == 'getUserReqStates') {
+// 			console.log('AGV with id ' + res_msg.states[0].payload_states[0].agv_id + 'is assigned');
+// 			console.log('Task state is ' + res_msg.states[0].payload_states[0].state);
+// 		}	
+// 	});	
 	
-	const publisher = node.createPublisher(SestoApiInfo, 'task_info');
+// 	const publisher = node.createPublisher(SestoApiInfo, 'task_info');
 	
-	console.log("RCL Nodejs Init Successfully!!")
+// 	console.log("RCL Nodejs Init Successfully!!")
 	
-	rclnodejs.spin(node);
+// 	rclnodejs.spin(node);
 
 
-});
+// });
