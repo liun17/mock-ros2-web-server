@@ -42,6 +42,23 @@ Source ros2 before npm install `source ~/ros2_dir/install/local_setup.bash`
 npm install
 ```
 
+* YOU CAN EVEN USE `DOCKER` TO HAVE A SETUP ENVIRONMENT
+
+#### 3) Setup NodeJS, RCLNODEJS and ROS2
+
+a) Compile and source ROS2 .msg file 
+```
+cd .../ROS2_dir/src
+git clone XXXX
+colcon build --symlink-install --packages-select XXXX
+source install/local_setup.bash
+```
+
+b) Generate Msg File in RCLNodejs
+```
+node rclnodejs/script/generate_messages.js
+```
+
 ### Error Faced
 
 * Mainly not recommended to use `develop` branch for rcl nodejs
