@@ -42,7 +42,8 @@ Source ros2 before npm install `source ~/ros2_dir/install/local_setup.bash`
 npm install
 ```
 
-* YOU CAN EVEN USE `DOCKER` TO HAVE A SETUP ENVIRONMENT
+* TILL HERE, YOU CAN EVEN USE `DOCKER` TO HAVE A SETUP ROS2 and RCLNODEJS ENVIRONMENT
+* TBC -> link to my own docker
 
 #### 3) Setup NodeJS, RCLNODEJS and ROS2
 
