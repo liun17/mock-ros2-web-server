@@ -75,12 +75,15 @@ app.use('/submit_status_msg', function (req, res) {
 	msg1.requests = []
 	publisher.publish(msg1);
 	res.json('Status Request Submitted');
+	console.log("submit status msg being called!!")
 });
 
 
 // RCL Nodejs Handler
 rclnodejs.init().then(() => {
+	
 	const node = rclnodejs.createNode('task_info_ui');
+	
 	node.createSubscription(ServerResponse, 'response', (msg) => {
 		console.log(`Received message : ${typeof msg}`, msg.response);
 		var res_msg = JSON.parse(msg.response);
@@ -96,7 +99,10 @@ rclnodejs.init().then(() => {
 			console.log('Task state is ' + res_msg.states[0].payload_states[0].state);
 		}	
 	});	
-
+	
 	const publisher = node.createPublisher(SestoApiInfo, 'task_info');
+	
+	console.log("RCL Nodejs Init Successfully!!")
+	
 	rclnodejs.spin(node);
 });
