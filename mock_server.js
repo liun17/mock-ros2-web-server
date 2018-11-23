@@ -106,5 +106,9 @@ rclnodejs.init().then(() => {
 		console.log("submit status msg being called!!")
 	});
 
+	app.listen(app.get('port'),function(){
+		console.log("Node Server running at port "+app.get('port'));
+	});
+
 	
 });
