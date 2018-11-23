@@ -81,7 +81,7 @@ app.use('/submit_status_msg', function (req, res) {
 
 
 
-app.use('/send/', function (req, res) {
+app.get('/send/', function (req, res) {
 	console.log("submit /send/ status msg being called!!")
 });
 
