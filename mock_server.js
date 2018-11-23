@@ -15,14 +15,13 @@ const rclnodejs = require(__dirname + '/../rclnodejs/index.js');
 let String = rclnodejs.require('std_msgs').msg.String;
 let SestoApiInfo = rclnodejs.require('sesto_api_msgs').msg.SestoApiInfo;
 let ServerResponse = rclnodejs.require('sesto_api_msgs').msg.ServerResponse;
-let patientDevice_msg = rclnodejs.require('patient_device').msg.ServerResponse;
+let patientDevice_msg = rclnodejs.require('patient_device').msg.patientDevice_msg;
 
 //	var date = new Date();
 let msg = new String();
 let msg1 = new SestoApiInfo();
 
 let deviceID_msg = new String();
-
 let ack_msg = new patientDevice_msg();
 
 
