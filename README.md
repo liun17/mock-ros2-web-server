@@ -69,7 +69,7 @@ node rclnodejs/script/generate_messages.js
 
 ## Setup via Docker
 
-YOU CAN EVEN USE `DOCKER` TO HAVE A SETUP ROS2 and RCLNODEJS ENVIRONMENT. This is a simpler and hassle free way to setup a compatible environment
+You can even use `DOCKER` to have a setup ROS2 and RCLNODEJS environment. This is a simpler and hassle free way to setup a compatible environment.
 
 Follow the instruction here to install docker, [here](https://www.digitalocean.com/community/tutorials/how-to-install-and-use-docker-on-ubuntu-16-04)
 
@@ -80,11 +80,19 @@ docker pull tanyouliang95/ros2-nodejs-mock
 docker run -it tanyouliang95/ros2-nodejs-mock
 cd /home/mock-ros2-web-server
 git pull  # ensure newest version
-node mock-web-server.js
 ```
 
 
 ## Testing of Webserver
+
+Open a terminal, and `cd /home/mock-ros2-web-server`. Then run the the nodejs server:
+
+```
+node mock-web-server.js
+
+```
+
+Here, open another terminal with ros2 environment being setup. Test the server by pub sub to `ros2 topic`. 
 
 **Publish dummy msg:**
 
