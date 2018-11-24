@@ -71,7 +71,7 @@ node rclnodejs/script/generate_messages.js
 
 YOU CAN EVEN USE `DOCKER` TO HAVE A SETUP ROS2 and RCLNODEJS ENVIRONMENT. This is a simpler and hassle free way to setup a compatible environment
 
-Install docker [here](https://www.digitalocean.com/community/tutorials/how-to-install-and-use-docker-on-ubuntu-16-04)
+Follow the instruction here to install docker, [here](https://www.digitalocean.com/community/tutorials/how-to-install-and-use-docker-on-ubuntu-16-04)
 
 Access this site: https://hub.docker.com/r/tanyouliang95/ros2-nodejs-mock/
 
