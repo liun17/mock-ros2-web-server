@@ -22,7 +22,7 @@ let msg = new String();
 let msg1 = new SestoApiInfo();
 
 let deviceID_msg = new String();
-let ack_msg = new Acknowledgement();
+let ack_msg = new Acknowledgement_msg();
 
 
 
