@@ -65,9 +65,7 @@ rclnodejs.init().then(() => {
 	// Sub for patient device: caller id
 	node.createSubscription(String, '/caller_id', (msg) => {
 		console.log(`!!!!!!  Received message : ${typeof msg}`, msg.data);
-
-		
-
+		publish_acknowledgement( msg.data, 1 );	// acknowledgement of received triggered from patient
 	});	
 
 	
@@ -102,17 +100,15 @@ app.get('/send', function (req, res) {
 	
 });
 
+// Manually provide acknowledgement
 app.get('/ack/:status', function(req, res) {
 	// res.send(req.params.status);
 	ch = req.params.status
-	console.log(Number(ch), (Number(ch) != NaN) )
-	if ( !Number.isNaN( Number(ch) ) ){
-		
-		publish_acknowledgement("AAAA", Number(ch))
+	if ( Number.isNaN( Number(ch) ) ){
+		console.log("## Input Ack status `NAN` is not a number!!")
+		return;
 	}
-	else{  // not working 
-		console.log("## Input Ack status is not a number!!")
-	}
+	publish_acknowledgement("AAAA", Number(ch))
 });
 
 app.listen( 5003 ,function(){
