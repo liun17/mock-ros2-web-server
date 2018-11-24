@@ -89,7 +89,6 @@ Open a terminal, and `cd /home/mock-ros2-web-server`. Then run the the nodejs se
 
 ```
 node mock-web-server.js
-
 ```
 
 Here, open another terminal with ros2 environment being setup. Test the server by pub sub to `ros2 topic`. 
