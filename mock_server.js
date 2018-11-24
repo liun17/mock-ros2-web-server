@@ -128,8 +128,10 @@ app.use('/submit_status_msg', function (req, res) {
 app.get('/send', function (req, res) {
 	console.log("submit /send/ status msg being called!!")
 	setInterval(function(){ 
+		ack_msg.status = req.params.status
+		ack_msg.deviceid = "AAAA"
+		patientDevice_pub.publish(ack_msg);
 		console.log("pub to /call_acknowledgment"); 
-		
 	}, 3000);
 	
 });
