@@ -66,7 +66,7 @@ rclnodejs.init().then(() => {
 	
 	// Sub for patient device: caller id
 	node.createSubscription(String, '/caller_id', (msg) => {
-		console.log(`!!!!!!  Received message : ${typeof msg}`, msg);
+		console.log(`!!!!!!  Received message : ${typeof msg}`, msg.data);
 	});	
 
 	
