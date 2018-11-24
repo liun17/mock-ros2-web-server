@@ -24,7 +24,9 @@ let msg1 = new SestoApiInfo();
 let deviceID_msg = new String();
 let ack_msg = new Acknowledgement_msg();
 
-
+// Global publisher 
+let publisher = -1;
+let patientDevice_pub = -1;
 
 msg1.method = "createAdhocRequest";
 msg1.user_id = 1234;
@@ -38,6 +40,45 @@ msg1.agv_id = 0;
 msg1.req_id = 0;
 msg1.requests = []
 
+
+
+
+
+
+// // RCL Nodejs Handler
+rclnodejs.init().then(() => {
+	
+	const node = rclnodejs.createNode('task_info_ui');
+	
+	node.createSubscription(ServerResponse, 'response', (msg) => {
+		console.log(`Received message : ${typeof msg}`, msg.response);
+		var res_msg = JSON.parse(msg.response);
+		if (msg.method == 'createAdhocRequest') {
+			//alert('Request succesfully created with id '+res_msg.req_id);
+			console.log('Request succesfully created with id ' + res_msg.req_id);
+			//msg1.method="getUserReqStates";
+			//msg1.requests[0]=res_msg.req_id;
+			//publisher.publish(msg1);
+		}	
+		else if (msg.method == 'getUserReqStates') {
+			console.log('AGV with id ' + res_msg.states[0].payload_states[0].agv_id + 'is assigned');
+			console.log('Task state is ' + res_msg.states[0].payload_states[0].state);
+		}	
+	});	
+	
+	node.createSubscription(String, '/caller_id', (msg) => {
+		console.log(`!!!!!!  Received message : ${typeof msg}`, msg.response);
+	});	
+
+	
+	publisher = node.createPublisher(SestoApiInfo, 'task_info');
+	patientDevice_pub = node.createPublisher(Acknowledgement_msg, '/call_acknowledgement');
+	
+	console.log("RCL Nodejs Init Successfully!!")
+	
+	rclnodejs.spin(node);
+	
+});
 
 
 app.use('/home', function (req, res) {
@@ -86,54 +127,21 @@ app.use('/submit_status_msg', function (req, res) {
 
 app.get('/send', function (req, res) {
 	console.log("submit /send/ status msg being called!!")
+	setInterval(function(){ 
+		console.log("pub to /call_acknowledgment"); 
+		
+	}, 3000);
+	
 });
 
 app.get('/ack/:status', function(req, res) {
 	// res.send(req.params.status);
 	ack_msg.status = req.params.status
 	ack_msg.deviceid = "AAAA"
-	publisher.publish(ack_msg);
+	patientDevice_pub.publish(ack_msg);
 	console.log("!!!!!!Reply status to topic as ", req.params.status)
 });
 
 app.listen( 5003 ,function(){
 	console.log("Node Server running at port "+ 5003);
-});
-
-
-
-// // RCL Nodejs Handler
-rclnodejs.init().then(() => {
-	
-	const node = rclnodejs.createNode('task_info_ui');
-	
-	node.createSubscription(ServerResponse, 'response', (msg) => {
-		console.log(`Received message : ${typeof msg}`, msg.response);
-		var res_msg = JSON.parse(msg.response);
-		if (msg.method == 'createAdhocRequest') {
-			//alert('Request succesfully created with id '+res_msg.req_id);
-			console.log('Request succesfully created with id ' + res_msg.req_id);
-			//msg1.method="getUserReqStates";
-			//msg1.requests[0]=res_msg.req_id;
-			//publisher.publish(msg1);
-		}	
-		else if (msg.method == 'getUserReqStates') {
-			console.log('AGV with id ' + res_msg.states[0].payload_states[0].agv_id + 'is assigned');
-			console.log('Task state is ' + res_msg.states[0].payload_states[0].state);
-		}	
-	});	
-	
-	node.createSubscription(String, 'caller_id', (msg) => {
-		console.log(`!!!!!!  Received message : ${typeof msg}`, msg.response);
-	});	
-
-
-	const publisher = node.createPublisher(SestoApiInfo, 'task_info');
-	const patientDevice_pub = node.createPublisher(Acknowledgement_msg, 'call_acknowledgement');
-	
-	console.log("RCL Nodejs Init Successfully!!")
-	
-	rclnodejs.spin(node);
-
-
 });
