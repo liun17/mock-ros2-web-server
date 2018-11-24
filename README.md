@@ -1,5 +1,5 @@
 # mock-ros2-web-server
-Testing on ROS2 rclnodejs webserver
+Testing on ROS2 rclnodejs webserver. Theres 2 method of setting up the `Normal Environment Setup`, 
 
 ## Normal Environment Setup
 
@@ -42,9 +42,6 @@ Source ros2 before npm install `source ~/ros2_dir/install/local_setup.bash`
 npm install
 ```
 
-* TILL HERE, YOU CAN EVEN USE `DOCKER` TO HAVE A SETUP ROS2 and RCLNODEJS ENVIRONMENT
-* TBC -> link to my own docker
-
 #### 3) Setup NodeJS, RCLNODEJS and ROS2
 
 a) Compile and source ROS2 .msg file 
@@ -61,22 +58,30 @@ node rclnodejs/script/generate_messages.js
 ### nodejs msg will be generated according to available sys ros2 msg
 ```
 
-## Setup via Docker
-
-Install docker [here](https://www.digitalocean.com/community/tutorials/how-to-install-and-use-docker-on-ubuntu-16-04)
-
-Access this site: https://hub.docker.com/r/tanyouliang95/ros2-nodejs-mock/
-```
-docker pull tanyouliang95/ros2-nodejs-mock
-docker run -it tanyouliang95/ros2-nodejs-mock
-```
-
-## Error Faced
+### Error Faced
 
 * Mainly not recommended to use `develop` branch for rcl nodejs
 * cant `npm install` in ubuntu 16 with `ros2 ardent` binary installed
 * with ros2 bouncy's source being installed, prob still lies, cuz path too long, weird stuff happened
 * Ros2 topic communication between Ardent and bouncy seems to have some issue
+
+
+
+## Setup via Docker
+
+YOU CAN EVEN USE `DOCKER` TO HAVE A SETUP ROS2 and RCLNODEJS ENVIRONMENT. This is a simpler and hassle free way to setup a compatible environment
+
+Install docker [here](https://www.digitalocean.com/community/tutorials/how-to-install-and-use-docker-on-ubuntu-16-04)
+
+Access this site: https://hub.docker.com/r/tanyouliang95/ros2-nodejs-mock/
+
+```
+docker pull tanyouliang95/ros2-nodejs-mock
+docker run -it tanyouliang95/ros2-nodejs-mock
+cd /home/mock-ros2-web-server
+git pull  # ensure newest version
+node mock-web-server.js
+```
 
 
 ## Testing of Webserver
