@@ -30,7 +30,7 @@ let ack_msg = new Acknowledgement_msg();
 // Global publisher 
 let publisher = -1;
 let patientDevice_pub = -1;
-
+let current_patient_id = 'AAAA';
 
 function publish_acknowledgement(ID, status) {
 	ack_msg.status = status
@@ -44,35 +44,20 @@ function publish_acknowledgement(ID, status) {
 // // RCL Nodejs Handler
 rclnodejs.init().then(() => {
 	
-	const node = rclnodejs.createNode('web_server');
-	
-	// node.createSubscription(ServerResponse, 'response', (msg) => {
-	// 	console.log(`Received message : ${typeof msg}`, msg.response);
-	// 	var res_msg = JSON.parse(msg.response);
-	// 	if (msg.method == 'createAdhocRequest') {
-	// 		//alert('Request succesfully created with id '+res_msg.req_id);
-	// 		console.log('Request succesfully created with id ' + res_msg.req_id);
-	// 		//msg1.method="getUserReqStates";
-	// 		//msg1.requests[0]=res_msg.req_id;
-	// 		//publisher.publish(msg1);
-	// 	}	
-	// 	else if (msg.method == 'getUserReqStates') {
-	// 		console.log('AGV with id ' + res_msg.states[0].payload_states[0].agv_id + 'is assigned');
-	// 		console.log('Task state is ' + res_msg.states[0].payload_states[0].state);
-	// 	}	
-	// });	
+	const node = rclnodejs.createNode('mock-web-server');
 	
 	// Sub for patient device: caller id
-	node.createSubscription(String, '/caller_id', (msg) => {
-		console.log(`!!!!!!  Received message : ${typeof msg}`, msg.data);
+	node.createSubscription(String, '/patient_device/caller_id', (msg) => {
+		console.log("[Subcriber]:: received msg at /caller_id of: ", msg.data)
+		current_patient_id = msg.data;
 		publish_acknowledgement( msg.data, 1 );	// acknowledgement of received triggered from patient
 	});	
 
 	
 	// publisher = node.createPublisher(SestoApiInfo, 'task_info');
-	patientDevice_pub = node.createPublisher(Acknowledgement_msg, '/call_acknowledgement');
+	patientDevice_pub = node.createPublisher(Acknowledgement_msg, '/patient_device/call_acknowledgement');
 	
-	console.log("RCL Nodejs Init Successfully!!")
+	console.log(" ------------ RCL Nodejs Init Successfully!!! ------------")
 	
 	rclnodejs.spin(node);
 
@@ -108,7 +93,7 @@ app.get('/ack/:status', function(req, res) {
 		console.log("## Input Ack status `NAN` is not a number!!")
 		return;
 	}
-	publish_acknowledgement("AAAA", Number(ch))
+	publish_acknowledgement(current_patient_id, Number(ch))
 });
 
 app.listen( 5003 ,function(){

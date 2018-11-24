@@ -57,7 +57,8 @@ source install/local_setup.bash
 
 b) Generate Msg File in RCLNodejs
 ```
-node rclnodejs/script/generate_messages.js
+node rclnodejs/script/generate_messages.js 
+### nodejs msg will be generated according to available sys ros2 msg
 ```
 
 
@@ -71,16 +72,17 @@ node rclnodejs/script/generate_messages.js
 
 ### Testing
 
-*Publish dummy msg:*
+**Publish dummy msg:**
 
 ```
-ros2 topic pub /caller_id std_msgs/String "data: AAAA"
+ros2 topic pub /patient_device/caller_id std_msgs/String "data: AAAA"
 ```
 
-*Subscribe Dummy Msg:*
-Access this via web browser: `http://172.17.0.2:5003/ack/{ANY NUMBER}`
+**Subscribe Dummy Msg:**
+
+Check IP via 'ifconfig', then access this via web browser: `http://172.17.0.2:5003/ack/{ANY NUMBER}`
 
 ```
-ros2 topic echo /call_acknowledgement
+ros2 topic echo /patient_device/call_acknowledgement
 ```
 
