@@ -1,7 +1,7 @@
 # mock-ros2-web-server
 Testing on ROS2 rclnodejs webserver
 
-## Environment Setup
+## Normal Environment Setup
 
 #### 1) Install NodeJs
 install nodejs with a version above v8. Use NVM for installation
@@ -61,8 +61,17 @@ node rclnodejs/script/generate_messages.js
 ### nodejs msg will be generated according to available sys ros2 msg
 ```
 
+## Setup via Docker
 
-### Error Faced
+Install docker [here](https://www.digitalocean.com/community/tutorials/how-to-install-and-use-docker-on-ubuntu-16-04)
+
+Access this site: https://hub.docker.com/r/tanyouliang95/ros2-nodejs-mock/
+```
+docker pull tanyouliang95/ros2-nodejs-mock
+docker run -it tanyouliang95/ros2-nodejs-mock
+```
+
+## Error Faced
 
 * Mainly not recommended to use `develop` branch for rcl nodejs
 * cant `npm install` in ubuntu 16 with `ros2 ardent` binary installed
@@ -70,7 +79,7 @@ node rclnodejs/script/generate_messages.js
 * Ros2 topic communication between Ardent and bouncy seems to have some issue
 
 
-### Testing of Webserver
+## Testing of Webserver
 
 **Publish dummy msg:**
 
