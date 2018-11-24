@@ -15,7 +15,7 @@ const rclnodejs = require(__dirname + '/../rclnodejs/index.js');
 let String = rclnodejs.require('std_msgs').msg.String;
 let SestoApiInfo = rclnodejs.require('sesto_api_msgs').msg.SestoApiInfo;
 let ServerResponse = rclnodejs.require('sesto_api_msgs').msg.ServerResponse;
-let Acknowledgement = rclnodejs.require('patient_device').msg.Acknowledgement;
+let Acknowledgement_msg = rclnodejs.require('patient_device').msg.Acknowledgement;
 
 //	var date = new Date();
 let msg = new String();
@@ -123,13 +123,13 @@ rclnodejs.init().then(() => {
 		}	
 	});	
 	
-	node.createSubscription(deviceID_msg, 'caller_id', (msg) => {
+	node.createSubscription(String, 'caller_id', (msg) => {
 		console.log(`!!!!!!  Received message : ${typeof msg}`, msg.response);
 	});	
 
 
 	const publisher = node.createPublisher(SestoApiInfo, 'task_info');
-	const patientDevice_pub = node.createPublisher(ack_msg, 'call_acknowledgement');
+	const patientDevice_pub = node.createPublisher(Acknowledgement_msg, 'call_acknowledgement');
 	
 	console.log("RCL Nodejs Init Successfully!!")
 	
