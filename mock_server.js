@@ -106,7 +106,7 @@ app.get('/ack/:status', function(req, res) {
 	// res.send(req.params.status);
 	ch = req.params.status
 	console.log(Number(ch), (Number(ch) != NaN) )
-	if (Number(ch) != NaN){
+	if ( !Number.isNaN( Number(ch) ) ){
 		
 		publish_acknowledgement("AAAA", Number(ch))
 	}
