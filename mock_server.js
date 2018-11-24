@@ -44,7 +44,7 @@ function publish_acknowledgement(ID, status) {
 // // RCL Nodejs Handler
 rclnodejs.init().then(() => {
 	
-	const node = rclnodejs.createNode('mock-web-server');
+	const node = rclnodejs.createNode('mock_web_server');
 	
 	// Sub for patient device: caller id
 	node.createSubscription(String, '/patient_device/caller_id', (msg) => {
@@ -96,8 +96,8 @@ app.get('/ack/:status', function(req, res) {
 	publish_acknowledgement(current_patient_id, Number(ch))
 });
 
-app.listen( 5003 ,function(){
-	console.log("Node Server running at port "+ 5003);
+app.listen( 5000 ,function(){
+	console.log(" Node Server running at port " + 5000);
 });
 
 
