@@ -105,10 +105,12 @@ app.get('/send', function (req, res) {
 app.get('/ack/:status', function(req, res) {
 	// res.send(req.params.status);
 	ch = req.params.status
+	console.log(Number(ch), (Number(ch) != NaN) )
 	if (Number(ch) != NaN){
+		
 		publish_acknowledgement("AAAA", Number(ch))
 	}
-	else{
+	else{  // not working 
 		console.log("## Input Ack status is not a number!!")
 	}
 });
