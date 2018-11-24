@@ -26,17 +26,17 @@ let ack_msg = new Acknowledgement();
 
 
 
-// msg1.method = "createAdhocRequest";
-// msg1.user_id = 1234;
-// msg1.pickup = "";
-// msg1.delivery = "";
-// msg1.payloads = ["ITEM" + new Date().toISOString()];
-// msg1.type = 0;
-// msg1.start_time = new Date().toISOString().replace(/T/, ' ').replace(/\..+/, '');
-// msg1.delivery_end = 30;
-// msg1.agv_id = 0;
-// msg1.req_id = 0;
-// msg1.requests = []
+msg1.method = "createAdhocRequest";
+msg1.user_id = 1234;
+msg1.pickup = "";
+msg1.delivery = "";
+msg1.payloads = ["ITEM" + new Date().toISOString()];
+msg1.type = 0;
+msg1.start_time = new Date().toISOString().replace(/T/, ' ').replace(/\..+/, '');
+msg1.delivery_end = 30;
+msg1.agv_id = 0;
+msg1.req_id = 0;
+msg1.requests = []
 
 
 
