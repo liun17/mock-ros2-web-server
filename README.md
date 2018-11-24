@@ -1,5 +1,5 @@
 # mock-ros2-web-server
-Testing on ROS2 rclnodejs webserver. Theres 2 method of setting up the `Normal Environment Setup`, 
+This package is a mock ROS2 rclnodejs webserver, solely for testing purpose. For ros1 nodejs communication, pls refer to [my package here](https://github.com/tanyouliang95/WebPlaneVisualizer). For setting up the environment, theres 2 approaches: `Normal Environment Setup` or `Docker`. Here docker is the recommended way for easy setup.
 
 ## Normal Environment Setup
 
