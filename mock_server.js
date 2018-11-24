@@ -21,8 +21,8 @@ let Acknowledgement_msg = rclnodejs.require('patient_device').msg.Acknowledgemen
 // let SestoApiInfo = rclnodejs.require('sesto_api_msgs').msg.SestoApiInfo;
 // let ServerResponse = rclnodejs.require('sesto_api_msgs').msg.ServerResponse;
 
-let msg = new String();
-let msg1 = new SestoApiInfo();
+// let msg = new String();
+// let msg1 = new SestoApiInfo();
 
 let deviceID_msg = new String();
 let ack_msg = new Acknowledgement_msg();
@@ -104,7 +104,13 @@ app.get('/send', function (req, res) {
 
 app.get('/ack/:status', function(req, res) {
 	// res.send(req.params.status);
-	publish_acknowledgement("AAAA", req.params.status)
+	ch = req.params.status
+	if (Number(ch) != NaN){
+		publish_acknowledgement("AAAA", Number(ch))
+	}
+	else{
+		console.log("## Input Ack status is not a number!!")
+	}
 });
 
 app.listen( 5003 ,function(){
