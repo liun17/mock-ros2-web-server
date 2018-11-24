@@ -102,7 +102,7 @@ ros2 topic pub /patient_device/caller_id std_msgs/String "data: AAAA"
 
 **Subscribe Dummy Msg:**
 
-Check IP via 'ifconfig', then access this via web browser: `http://172.17.0.2:5000/ack/{ANY NUMBER}`
+Check IP via `ifconfig`, then access this via web browser: `http://172.17.0.2:5000/ack/{ANY NUMBER}`
 
 ```
 ros2 topic echo /patient_device/call_acknowledgement
