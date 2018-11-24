@@ -60,8 +60,27 @@ b) Generate Msg File in RCLNodejs
 node rclnodejs/script/generate_messages.js
 ```
 
+
 ### Error Faced
 
 * Mainly not recommended to use `develop` branch for rcl nodejs
 * cant `npm install` in ubuntu 16 with `ros2 ardent` binary installed
 * with ros2 bouncy's source being installed, prob still lies, cuz path too long, weird stuff happened
+* Ros2 topic communication between Ardent and bouncy seems to have some issue
+
+
+### Testing
+
+*Publish dummy msg:*
+
+```
+ros2 topic pub /caller_id std_msgs/String "data: AAAA"
+```
+
+*Subscribe Dummy Msg:*
+Access this via web browser: `http://172.17.0.2:5003/ack/{ANY NUMBER}`
+
+```
+ros2 topic echo /call_acknowledgement
+```
+
