@@ -1,5 +1,5 @@
 /*
-* Created: Testing for RMF Project (YouLiang)
+* Created: Testing for RMF Project (Tan You Liang), Nov 2018
 * Usage: Establish a webserver for ROS2 to nodejs communication with DDS protocol
 *
 * Folder struct:
@@ -8,21 +8,19 @@
 *	 - /mock-ros2-web-server/
 *		- node_modules/
 *		- mock_server.js
+*		- patient_display.html
+*
 *
 */
 
 
 var express = require('express');
 var app = express();
+var WebSocketServer = require('ws').Server;
 
 const rclnodejs = require(__dirname + '/../rclnodejs/index.js');
 let String = rclnodejs.require('std_msgs').msg.String;
 let Acknowledgement_msg = rclnodejs.require('patient_device').msg.Acknowledgement;
-// let SestoApiInfo = rclnodejs.require('sesto_api_msgs').msg.SestoApiInfo;
-// let ServerResponse = rclnodejs.require('sesto_api_msgs').msg.ServerResponse;
-
-// let msg = new String();
-// let msg1 = new SestoApiInfo();
 
 let deviceID_msg = new String();
 let ack_msg = new Acknowledgement_msg();
@@ -31,6 +29,12 @@ let ack_msg = new Acknowledgement_msg();
 let publisher = -1;
 let patientDevice_pub = -1;
 let current_patient_id = 'AAAA';
+let callstatus = 0;   // FOR FRONTEND -> 0: no call, 1: trigger call
+
+
+
+
+// ==============================  RCLNodejs stuffs  ==============================
 
 function publish_acknowledgement(ID, status) {
 	ack_msg.status = status
@@ -40,8 +44,6 @@ function publish_acknowledgement(ID, status) {
 	console.log("\t\t ID: ", ID, "  status: ", status); 
 }
 
-
-// // RCL Nodejs Handler
 rclnodejs.init().then(() => {
 	
 	const node = rclnodejs.createNode('mock_web_server');
@@ -50,7 +52,11 @@ rclnodejs.init().then(() => {
 	node.createSubscription(String, '/patient_device/caller_id', (msg) => {
 		console.log("[Subcriber]:: received msg at /caller_id of: ", msg.data)
 		current_patient_id = msg.data;
-		publish_acknowledgement( msg.data, 1 );	// acknowledgement of received triggered from patient
+    publish_acknowledgement( msg.data, 1 );	// acknowledgement of received triggered from patient
+    
+    // receive deviceID here will trigged frontend call
+    // TODO: need match deviceID to frontend
+    callstatus = 1;
 	});	
 
 	
@@ -64,6 +70,43 @@ rclnodejs.init().then(() => {
 });
 
 
+
+
+// ==============================  Websocket stuffs  ==============================
+
+wss = new WebSocketServer({port: 8888, path: "/ws"})
+
+wss.on('connection', function (ws) {
+  ws.on('message', function (message) {
+    console.log('[WS]::Received Msg from frontend: %s', message)
+    
+    //if its a number, juz for safety
+    if ( !Number.isNaN( Number(message) ) ){
+      console.log('[WS]::Received a number: %s', message)
+      callstatus = Number(message);
+    }
+  })
+
+  var send_ws = setInterval(
+    function(){
+
+      // check if websocket is closed
+      // -- mode: CONNECTING, OPEN, CLOSING, CLOSED
+      if(ws.readyState === ws.CLOSED){
+        // Do your stuff...
+        console.log("[WS]::Websocket port is closed")
+        clearInterval(send_ws);
+      }
+      else{
+        console.log("[WS]:: - Sending ws msg to frontend")
+        ws.send(callstatus);
+      }
+    },
+    1000
+  )
+})
+
+
 // ==============================  NodeJs stuffs  ==============================
 
 app.use(express.json());
@@ -75,6 +118,15 @@ app.use('/home', function (req, res) {
 });
 
 
+// Patient Device UI
+app.use('/patient', function (req, res) {
+	console.log("[UI]::load patient device page");
+	res.sendFile(__dirname + '/patient_display.html');
+});
+
+// for all static files in /static folder
+app.use('/static', express.static(__dirname + '/static/'));
+
 // This is for testing, send interval msg to /call_acknowledgement
 app.get('/send', function (req, res) {
 	console.log("submit /send/ status msg being called!!")
@@ -82,7 +134,6 @@ app.get('/send', function (req, res) {
 		console.log("INTERVAL MODE"); 
 		publish_acknowledgement("AAAA", -1);
 	}, 3000);
-	
 });
 
 // Manually provide acknowledgement
@@ -93,6 +144,7 @@ app.get('/ack/:status', function(req, res) {
 		console.log("## Input Ack status `NAN` is not a number!!")
 		return;
 	}
+	callstatus = Number(Number(ch));
 	publish_acknowledgement(current_patient_id, Number(ch))
 });
 
