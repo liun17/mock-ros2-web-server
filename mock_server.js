@@ -52,12 +52,14 @@ rclnodejs.init().then(() => {
 	node.createSubscription(String, '/patient_device/caller_id', (msg) => {
 		console.log("[Subcriber]:: received msg at /caller_id of: ", msg.data)
 		current_patient_id = msg.data;
-    publish_acknowledgement( msg.data, 1 );	// acknowledgement of received triggered from patient
     
     // receive deviceID here will trigged frontend call
     // TODO: need match deviceID to frontend
     callstatus = 1;
-	});	
+
+    publish_acknowledgement( msg.data, 1 );	// acknowledgement of received triggered from patient
+
+  });	
 
 	
 	// publisher = node.createPublisher(SestoApiInfo, 'task_info');
@@ -87,9 +89,15 @@ wss.on('connection', function (ws) {
       console.log('[WS]::Received a number: %s', message)
       callstatus = Number(message);
 
-      // publish call status to ros2 dds
-      publish_acknowledgement(current_patient_id, Number(callstatus))
-
+      // publish call status to ros2 dds, 3 times, for ensurance
+      var pub_count = 0;
+      var pub_callend = setInterval(function(){
+        publish_acknowledgement(current_patient_id, Number(callstatus))
+        pub_count = pub_count + 1 ;
+        if (pub_count > 3){
+          clearInterval(pub_callend);
+        }
+      }, 500); 
     }
   })
 
