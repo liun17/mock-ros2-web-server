@@ -100,7 +100,7 @@ ros2 topic echo /patient_device/call_acknowledgement
 ros2 topic pub /patient_device/caller_id std_msgs/String "data: AAAA"
 ```
 
-**Procedure**
+### Procedure
 
 Open a terminal, and `cd /home/mock-ros2-web-server`. Then run the the nodejs server:
 
@@ -112,18 +112,18 @@ Here, open another terminal with ros2 environment being setup. Test the server b
 
 Check IP via `ifconfig`, then access this via web browser:  `http://172.17.0.2:5000/patient`
 
-When ros2 topic: `/patient_device/caller_id` is received, frontend will start call mode, and provide acknowledgement of '1' to `/patient_device/call_acknowledgement` ros2 topic.
+When ros2 topic: `/patient_device/caller_id` sub msg is received, frontend (webpage) will display img of "call mode", and provide acknowledgement msg of '1' to `/patient_device/call_acknowledgement` ros2 topic.
 
-When "End Call" button on webpage is hit, acknowledgement '0' will send to the `/patient_device/call_acknowledgement` ros2 topic, successfully end the call proccess.
+When "End Call" button on webpage is hit, frontend (webpage) will display img of "pending mode". Acknowledgement msg '0' will send to the `/patient_device/call_acknowledgement` ros2 topic, successfully end the call proccess.
 
 
 
 ## Note
 
-- This is just a prototype (CHILL)
-- Front end and backend communication is via Websocket TCP :8888 port
+- This is just a prototype (CHILL....)
+- Front end and backend communication is via `Websocket` TCP :8888 port
 - This package is mainly working along side with a patient call button, with light indicator
 - the patient call button will trigger this whole call proccess via ros2 dds and websocket
-- Eventually webrtc will be used for video call
+- Eventually `WEBRTC` will be used for video call
 
 
