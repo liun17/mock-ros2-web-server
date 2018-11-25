@@ -85,6 +85,23 @@ git pull  # ensure newest version
 
 ## Testing of Webserver
 
+**Subscribe Dummy Msg:**
+
+- To control publish status manually, use `http://172.17.0.2:5000/ack/{ANY NUMBER}`
+
+
+```
+ros2 topic echo /patient_device/call_acknowledgement
+```
+
+**Publish dummy msg:**
+
+```
+ros2 topic pub /patient_device/caller_id std_msgs/String "data: AAAA"
+```
+
+**Procedure**
+
 Open a terminal, and `cd /home/mock-ros2-web-server`. Then run the the nodejs server:
 
 ```
@@ -93,17 +110,20 @@ node mock-web-server.js
 
 Here, open another terminal with ros2 environment being setup. Test the server by pub sub to `ros2 topic`. 
 
-**Publish dummy msg:**
+Check IP via `ifconfig`, then access this via web browser:  `http://172.17.0.2:5000/patient`
 
-```
-ros2 topic pub /patient_device/caller_id std_msgs/String "data: AAAA"
-```
+When ros2 topic: `/patient_device/caller_id` is received, frontend will start call mode, and provide acknowledgement of '1' to `/patient_device/call_acknowledgement` ros2 topic.
 
-**Subscribe Dummy Msg:**
+When "End Call" button on webpage is hit, acknowledgement '0' will send to the `/patient_device/call_acknowledgement` ros2 topic, successfully end the call proccess.
 
-Check IP via `ifconfig`, then access this via web browser: `http://172.17.0.2:5000/ack/{ANY NUMBER}`
 
-```
-ros2 topic echo /patient_device/call_acknowledgement
-```
+
+## Note
+
+- This is just a prototype (CHILL)
+- Front end and backend communication is via Websocket TCP :8888 port
+- This package is mainly working along side with a patient call button, with light indicator
+- the patient call button will trigger this whole call proccess via ros2 dds and websocket
+- Eventually webrtc will be used for video call
+
 
