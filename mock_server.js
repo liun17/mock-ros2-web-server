@@ -77,6 +77,8 @@ rclnodejs.init().then(() => {
 wss = new WebSocketServer({port: 8888, path: "/ws"})
 
 wss.on('connection', function (ws) {
+  
+  // When front end update status to backend
   ws.on('message', function (message) {
     console.log('[WS]::Received Msg from frontend: %s', message)
     
@@ -84,6 +86,10 @@ wss.on('connection', function (ws) {
     if ( !Number.isNaN( Number(message) ) ){
       console.log('[WS]::Received a number: %s', message)
       callstatus = Number(message);
+
+      // publish call status to ros2 dds
+      publish_acknowledgement(current_patient_id, Number(callstatus))
+
     }
   })
 
@@ -98,7 +104,7 @@ wss.on('connection', function (ws) {
         clearInterval(send_ws);
       }
       else{
-        console.log("[WS]:: - Sending ws msg to frontend")
+        console.log("[WS]:: - Sending ws msg to frontend: ", callstatus)
         ws.send(callstatus);
       }
     },
