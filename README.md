@@ -1,7 +1,7 @@
 # mock-ros2-web-server
-Testing on ROS2 rclnodejs webserver
+This package is a mock ROS2 rclnodejs webserver, solely for testing purpose. For ros1 nodejs communication, pls refer to [my package here](https://github.com/tanyouliang95/WebPlaneVisualizer). For setting up the environment, theres 2 approaches: `Normal Environment Setup` or `Docker`. Here docker is the recommended way for easy setup.
 
-## Environment Setup
+## Normal Environment Setup
 
 #### 1) Install NodeJs
 install nodejs with a version above v8. Use NVM for installation
@@ -42,9 +42,6 @@ Source ros2 before npm install `source ~/ros2_dir/install/local_setup.bash`
 npm install
 ```
 
-* TILL HERE, YOU CAN EVEN USE `DOCKER` TO HAVE A SETUP ROS2 and RCLNODEJS ENVIRONMENT
-* TBC -> link to my own docker
-
 #### 3) Setup NodeJS, RCLNODEJS and ROS2
 
 a) Compile and source ROS2 .msg file 
@@ -61,7 +58,6 @@ node rclnodejs/script/generate_messages.js
 ### nodejs msg will be generated according to available sys ros2 msg
 ```
 
-
 ### Error Faced
 
 * Mainly not recommended to use `develop` branch for rcl nodejs
@@ -70,7 +66,32 @@ node rclnodejs/script/generate_messages.js
 * Ros2 topic communication between Ardent and bouncy seems to have some issue
 
 
-### Testing of Webserver
+
+## Setup via Docker
+
+You can even use `DOCKER` to have a setup ROS2 and RCLNODEJS environment. This is a simpler and hassle free way to setup a compatible environment.
+
+Follow the instruction here to install docker, [here](https://www.digitalocean.com/community/tutorials/how-to-install-and-use-docker-on-ubuntu-16-04)
+
+Access this site: https://hub.docker.com/r/tanyouliang95/ros2-nodejs-mock/
+
+```
+docker pull tanyouliang95/ros2-nodejs-mock
+docker run -it tanyouliang95/ros2-nodejs-mock
+cd /home/mock-ros2-web-server
+git pull  # ensure newest version
+```
+
+
+## Testing of Webserver
+
+Open a terminal, and `cd /home/mock-ros2-web-server`. Then run the the nodejs server:
+
+```
+node mock-web-server.js
+```
+
+Here, open another terminal with ros2 environment being setup. Test the server by pub sub to `ros2 topic`. 
 
 **Publish dummy msg:**
 
@@ -80,7 +101,7 @@ ros2 topic pub /patient_device/caller_id std_msgs/String "data: AAAA"
 
 **Subscribe Dummy Msg:**
 
-Check IP via 'ifconfig', then access this via web browser: `http://172.17.0.2:5000/ack/{ANY NUMBER}`
+Check IP via `ifconfig`, then access this via web browser: `http://172.17.0.2:5000/ack/{ANY NUMBER}`
 
 ```
 ros2 topic echo /patient_device/call_acknowledgement
