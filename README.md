@@ -78,6 +78,15 @@ Access this site: https://hub.docker.com/r/tanyouliang95/ros2-nodejs-mock/
 ```
 docker pull tanyouliang95/ros2-nodejs-mock
 docker run -it tanyouliang95/ros2-nodejs-mock
+```
+For host port mapping (to be able to access it on local network):
+
+```
+docker run -it -p XXX.XX.XX.XXX:5000:5000 -p XXX.XX.XX.XXX:8888:8888 tanyouliang95/ros2-nodejs-mock
+```
+* Here, 5000 port is for webpage, and 888 is websocket.
+
+```
 cd /home/mock-ros2-web-server
 git pull  # ensure newest version
 ```
