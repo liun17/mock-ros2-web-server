@@ -104,7 +104,7 @@ ros2 topic pub /patient_device/caller_id std_msgs/String "data: AAAA"
 Open a terminal, and `cd /home/mock-ros2-web-server`. Then run the the nodejs server:
 
 ```
-node mock-web-server.js
+node mock_server.js
 ```
 
 Here, open another terminal with ros2 environment being setup. Test the server by pub sub to `ros2 topic`. 
@@ -125,7 +125,7 @@ When "End Call" button on webpage is hit, frontend (webpage) will display img of
 - the patient call button will trigger this whole call proccess via ros2 dds and websocket
 - Eventually `WEBRTC` will be used for video call
 
-* Tried with docker, but the problem is the network IP between external devices while using ROS2.
+* Tried with docker, but the problem is the network IP between external devices while using ROS2. ` --network=host` solves this.
 * So it's recommendable to use `Ubuntu 18` with RCLNODEJS installed, and run the server without a virtual container.
 
 
