@@ -66,7 +66,6 @@ node rclnodejs/script/generate_messages.js
 * Ros2 topic communication between Ardent and bouncy seems to have some issue
 
 
-
 ## Setup via Docker
 
 You can even use `DOCKER` to have a setup ROS2 and RCLNODEJS environment. This is a simpler and hassle free way to setup a compatible environment.
@@ -134,5 +133,9 @@ When "End Call" button on webpage is hit, frontend (webpage) will display img of
 - This package is mainly working along side with a patient call button, with light indicator
 - the patient call button will trigger this whole call proccess via ros2 dds and websocket
 - Eventually `WEBRTC` will be used for video call
+
+* Tried with docker, but the problem is the network IP between external devices while using ROS2.
+* So it's recommendable to use `Ubunutu 18` with RCLNODEJS installed, and run the server without a virtual container.
+
 
 
