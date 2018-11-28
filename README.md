@@ -44,7 +44,7 @@ npm install
 
 #### 3) Setup NodeJS, RCLNODEJS and ROS2
 
-a) Compile and source ROS2 .msg file 
+a) Compile and source ROS2 .msg file  (In this case, `patient_device`)
 ```
 cd .../ROS2_dir/src
 git clone XXXX
