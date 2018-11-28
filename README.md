@@ -84,7 +84,7 @@ For host port mapping (to be able to access it on local network):
 ```
 docker run -it -p XXX.XX.XX.XXX:5000:5000 -p XXX.XX.XX.XXX:8888:8888 tanyouliang95/ros2-nodejs-mock
 ```
-* Here, 5000 port is for webpage, and 888 is websocket.
+* Here, 5000 port is for webpage, and 888 is websocket. Then....
 
 ```
 cd /home/mock-ros2-web-server
