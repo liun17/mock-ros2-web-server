@@ -76,16 +76,7 @@ Access this site: https://hub.docker.com/r/tanyouliang95/ros2-nodejs-mock/
 
 ```
 docker pull tanyouliang95/ros2-nodejs-mock
-docker run -it tanyouliang95/ros2-nodejs-mock
-```
-For host port mapping (to be able to access it on local network):
-
-```
-docker run -it -p XXX.XX.XX.XXX:5000:5000 -p XXX.XX.XX.XXX:8888:8888 tanyouliang95/ros2-nodejs-mock
-```
-* Here, 5000 port is for webpage, and 888 is websocket. Then....
-
-```
+docker run -it --network=host tanyouliang95/ros2-nodejs-mock
 cd /home/mock-ros2-web-server
 git pull  # ensure newest version
 ```
@@ -135,7 +126,7 @@ When "End Call" button on webpage is hit, frontend (webpage) will display img of
 - Eventually `WEBRTC` will be used for video call
 
 * Tried with docker, but the problem is the network IP between external devices while using ROS2.
-* So it's recommendable to use `Ubunutu 18` with RCLNODEJS installed, and run the server without a virtual container.
+* So it's recommendable to use `Ubuntu 18` with RCLNODEJS installed, and run the server without a virtual container.
 
 
 
