@@ -84,9 +84,12 @@ wss = new WebSocketServer({port: 8888, path: "/ws"})
 wss.on('connection', function (ws) {
   
   // When front end update status to backend
-  ws.on('message', function (message) {
-    console.log('[WS]::Received Msg from frontend: %s', message)
+  ws.on('message', function (msg) {
+    console.log('[WS]::Received Msg from frontend: %s', msg)
     
+    var obj = JSON.parse(msg.data);
+    let message = obj.Device_id;  //for now
+
     if (newClient == message){
       // get new client device_id from pending to active list
       pending_client_list.splice(pending_client_list.indexOf(newClient), 1); // remove ele from list
@@ -125,7 +128,10 @@ wss.on('connection', function (ws) {
         if( pending_client_list.length != 0 ){
           newClient = pending_client_list[pending_client_list.length - 1];
           console.log("[WS]:: - Sending ws 'startCall' msg to frontend client: ", newClient)
-          ws.send(newClient);          
+          ws.send(JSON.stringify({
+            Device_id: newClient,
+            Status: 1     // 1: call
+          }));          
         }
       }
     },

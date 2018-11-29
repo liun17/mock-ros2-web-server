@@ -67,12 +67,13 @@
       */
 
       let is_calling = false;
-      let device_id = 'AAAA';
-
+      
       let url = document.createElement("a");
       url.href = window.location.href;
       var ws = new WebSocket('ws://' + url.hostname + ':8888/ws');
-      console.log(url.search);
+      
+      let device_id = url.search.replace('?',''); // print "?DEVICE_ID"
+      console.log("device id from url: ", device_id);
       
       // Button endcall function
       function EndCall(){
@@ -91,25 +92,37 @@
       // connect ws port
       ws.onopen = function () {
           console.log('websocket is connected ...')
-          ws.send('null/0')
+          ws.send(JSON.stringify({
+            Device_id: device_id,
+            Status: 0     // 0: idle
+          }));
       }
 
       // When Receive web socket msg
       ws.onmessage = function (msg) {
 
-        let received_device_id = msg.data;
+        var obj = JSON.parse(msg.data);
+        
+        
+        let received_device_id = obj.Device_id;
 
-        // TODO: check mapping of caller ID, with json stringify
+        // ============== NOTIFY START CALL ================
         console.log("received from ws: ", received_device_id);
-        if (received_device_id == device_id){
-          ws.send(received_device_id && (is_calling == false) );
+        if (received_device_id == device_id && (is_calling == false) ){
+          
+          ws.send(JSON.stringify({
+            Device_id: device_id,
+            Status: 0     // 0: idle
+          }));
+
           console.log("---- Start Call ------ for device: ", received_device_id);
           document.getElementById("image").src = "static/patient_call_live.png"
           document.getElementById("endcall_btn").innerHTML= "End Call";
           is_calling = true
         }
 
-        // when get end call from backend (instead server)
+        // ============== NOTIFY END CALL , from backend ================
+
         // if ( status == 0){
         //   EndCall();
         // }
