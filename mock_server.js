@@ -37,8 +37,27 @@ let callstatus = 0;   // FOR FRONTEND -> 0: no call, 1: trigger call
 
 ws = new WebSocketServer({port: 8888, path: "/ws"})
 
-ws.on('connection', function (wss) {
+ws.on('connection', function (ws) {
   console.log(' Websocket port 8888 is connected ...');
+  
+  // Remove setInterval
+  var send_ws = setInterval(
+    function(){
+      // check if websocket is closed
+      // -- mode: CONNECTING, OPEN, CLOSING, CLOSED
+      if(ws.readyState === ws.CLOSED){
+        // Do your stuff...
+        console.log("[WS]::Websocket port is closed")
+        clearInterval(send_ws);
+      }
+      else{
+		// TODO: send DeviceID only when msg is receive.
+        console.log("[WS]:: - Sending ws msg to frontend: ", callstatus)
+        ws.send(callstatus);
+      }
+    },
+    1000
+  )
 })
 
 
@@ -65,66 +84,48 @@ ws.on('message', function (message) {
 })
   
 
-  // ==============================  RCLNodejs stuffs  ==============================
+// ==============================  RCLNodejs stuffs  ==============================
+
+function publish_acknowledgement(ID, status) {
+  ack_msg.status = status
+  ack_msg.deviceid = ID
+  patientDevice_pub.publish(ack_msg);
+  console.log("[Publisher]:: Published to /call_acknowledgment"); 
+  console.log("\t\t ID: ", ID, "  status: ", status); 
+}
+
+rclnodejs.init().then(() => {
   
-  function publish_acknowledgement(ID, status) {
-    ack_msg.status = status
-    ack_msg.deviceid = ID
-    patientDevice_pub.publish(ack_msg);
-    console.log("[Publisher]:: Published to /call_acknowledgment"); 
-    console.log("\t\t ID: ", ID, "  status: ", status); 
-  }
+  const node = rclnodejs.createNode('mock_web_server');
   
-  rclnodejs.init().then(() => {
+  // Sub for patient device: caller id
+  node.createSubscription(String, '/patient_device/caller_id', (msg) => {
+    console.log("[Subcriber]:: received msg at /caller_id of: ", msg.data)
+    current_patient_id = msg.data;
     
-    const node = rclnodejs.createNode('mock_web_server');
-    
-    // Sub for patient device: caller id
-    node.createSubscription(String, '/patient_device/caller_id', (msg) => {
-      console.log("[Subcriber]:: received msg at /caller_id of: ", msg.data)
-      current_patient_id = msg.data;
-      
-      // receive deviceID here will trigged frontend call
-      // TODO: send deviceID here to frontend
-      callstatus = 1;
+    // receive deviceID here will trigged frontend call
+    // TODO: send deviceID here to frontend
+    callstatus = 1;
+    if(ws.readyState !== ws.CLOSED){  //if websocket is not closed
       ws.send(callstatus);
+    }
+
+    publish_acknowledgement( msg.data, 1 );	// acknowledgement of received triggered from patient
+
+  });	
 
   
-      publish_acknowledgement( msg.data, 1 );	// acknowledgement of received triggered from patient
+  // publisher = node.createPublisher(SestoApiInfo, 'task_info');
+  patientDevice_pub = node.createPublisher(Acknowledgement_msg, '/patient_device/call_acknowledgement');
   
-    });	
+  console.log(" ------------ RCL Nodejs Init Successfully!!! ------------")
   
-    
-    // publisher = node.createPublisher(SestoApiInfo, 'task_info');
-    patientDevice_pub = node.createPublisher(Acknowledgement_msg, '/patient_device/call_acknowledgement');
-    
-    console.log(" ------------ RCL Nodejs Init Successfully!!! ------------")
-    
-    rclnodejs.spin(node);
-  
-  });
+  rclnodejs.spin(node);
+
+});
 
 
-  // Remove setInterval
-  var send_ws = setInterval(
-    function(){
 
-      // check if websocket is closed
-      // -- mode: CONNECTING, OPEN, CLOSING, CLOSED
-      if(ws.readyState === ws.CLOSED){
-        // Do your stuff...
-        console.log("[WS]::Websocket port is closed")
-        clearInterval(send_ws);
-      }
-      else{
-		// TODO: send DeviceID only when msg is receive.
-        console.log("[WS]:: - Sending ws msg to frontend: ", callstatus)
-        ws.send(callstatus);
-      }
-    },
-    1000
-  )
-})
 
 
 // ==============================  NodeJs stuffs  ==============================
