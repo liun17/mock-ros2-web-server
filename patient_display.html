@@ -53,33 +53,27 @@
 
 
     <script>
-      
+
+      /*
+      * Created By: Tan You Liang
+      *
+      * Testing html websocket comunication to backend 
+      * 
+      * Websocket Msg:
+      * - receive : deviceid/status
+      * - emit    : deviceid/status
+      * status -> 0: idle, 1: call, -1:  error
+      * 
+      */
+
       let is_calling = false;
 
       let url = document.createElement("a");
       url.href = window.location.href;
-      
+      console.log(url);
+
       var ws = new WebSocket('ws://' + url.hostname + ':8888/ws');
-
-      // connect ws port
-      ws.onopen = function () {
-          console.log('websocket is connected ...')
-          ws.send('connected')
-      }
-
-      // When Receive web socket msg
-      ws.onmessage = function (ev) {
-        let status = Number(ev.data)
-        console.log(status);
-
-        if ( (status == 1) && (is_calling == false)  ){
-          console.log("---- Start Call ------");
-          document.getElementById("image").src = "static/patient_call_live.png"
-          document.getElementById("endcall_btn").innerHTML= "End Call";
-          is_calling = true
-        }
-      }
-
+      
       // Button endcall function
       function EndCall(){
         console.log("End Call");
@@ -88,6 +82,35 @@
         document.getElementById("endcall_btn").innerHTML= "";
         status = 0;
         is_calling = false;
+      }
+
+
+
+      // ================================ Web Socket Connection ===============================
+
+      // connect ws port
+      ws.onopen = function () {
+          console.log('websocket is connected ...')
+          ws.send('null/0')
+      }
+
+      // When Receive web socket msg
+      ws.onmessage = function (ev) {
+        let status = Number(ev.data)
+        console.log(status);
+        
+        // TODO: check mapping of caller ID, with json stringify
+        if ( (status == 1) && (is_calling == false)  ){
+          console.log("---- Start Call ------");
+          document.getElementById("image").src = "static/patient_call_live.png"
+          document.getElementById("endcall_btn").innerHTML= "End Call";
+          is_calling = true
+        }
+
+        // when get end call from backend (instead server)
+        if ( status == 0){
+          EndCall();
+        }
       }
 
     </script>

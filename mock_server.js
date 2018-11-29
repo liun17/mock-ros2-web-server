@@ -10,9 +10,9 @@
 *		- mock_server.js
 *		- patient_display.html
 *
-*
 */
 
+// TODO: make sure front end deviceID match with caller_ID
 
 var express = require('express');
 var app = express();
@@ -33,74 +33,79 @@ let callstatus = 0;   // FOR FRONTEND -> 0: no call, 1: trigger call
 
 
 
-
-// ==============================  RCLNodejs stuffs  ==============================
-
-function publish_acknowledgement(ID, status) {
-	ack_msg.status = status
-	ack_msg.deviceid = ID
-	patientDevice_pub.publish(ack_msg);
-	console.log("[Publisher]:: Published to /call_acknowledgment"); 
-	console.log("\t\t ID: ", ID, "  status: ", status); 
-}
-
-rclnodejs.init().then(() => {
-	
-	const node = rclnodejs.createNode('mock_web_server');
-	
-	// Sub for patient device: caller id
-	node.createSubscription(String, '/patient_device/caller_id', (msg) => {
-		console.log("[Subcriber]:: received msg at /caller_id of: ", msg.data)
-		current_patient_id = msg.data;
-    
-    // receive deviceID here will trigged frontend call
-    // TODO: need match deviceID to frontend
-    callstatus = 1;
-
-    publish_acknowledgement( msg.data, 1 );	// acknowledgement of received triggered from patient
-
-  });	
-
-	
-	// publisher = node.createPublisher(SestoApiInfo, 'task_info');
-	patientDevice_pub = node.createPublisher(Acknowledgement_msg, '/patient_device/call_acknowledgement');
-	
-	console.log(" ------------ RCL Nodejs Init Successfully!!! ------------")
-	
-	rclnodejs.spin(node);
-
-});
-
-
-
-
 // ==============================  Websocket stuffs  ==============================
 
-wss = new WebSocketServer({port: 8888, path: "/ws"})
+ws = new WebSocketServer({port: 8888, path: "/ws"})
 
-wss.on('connection', function (ws) {
+ws.on('connection', function (wss) {
+  console.log(' Websocket port 8888 is connected ...');
+})
+
+
+// When front end update status to backend
+ws.on('message', function (message) {
   
-  // When front end update status to backend
-  ws.on('message', function (message) {
-    console.log('[WS]::Received Msg from frontend: %s', message)
+  console.log('[WS]::Received Msg from frontend: %s', message)
+  
+  //if its a number, juz for safety
+  if ( !Number.isNaN( Number(message) ) ){
+    console.log('[WS]::Received a number: %s', message)
+    callstatus = Number(message);
+
+    // publish call status to ros2 dds, 3 times, for ensurance
+    var pub_count = 0;
+    var pub_callend = setInterval(function(){
+      publish_acknowledgement(current_patient_id, Number(callstatus))
+      pub_count = pub_count + 1 ;
+      if (pub_count > 3){
+        clearInterval(pub_callend);
+      }
+    }, 500); 
+  }
+})
+  
+
+  // ==============================  RCLNodejs stuffs  ==============================
+  
+  function publish_acknowledgement(ID, status) {
+    ack_msg.status = status
+    ack_msg.deviceid = ID
+    patientDevice_pub.publish(ack_msg);
+    console.log("[Publisher]:: Published to /call_acknowledgment"); 
+    console.log("\t\t ID: ", ID, "  status: ", status); 
+  }
+  
+  rclnodejs.init().then(() => {
     
-    //if its a number, juz for safety
-    if ( !Number.isNaN( Number(message) ) ){
-      console.log('[WS]::Received a number: %s', message)
-      callstatus = Number(message);
+    const node = rclnodejs.createNode('mock_web_server');
+    
+    // Sub for patient device: caller id
+    node.createSubscription(String, '/patient_device/caller_id', (msg) => {
+      console.log("[Subcriber]:: received msg at /caller_id of: ", msg.data)
+      current_patient_id = msg.data;
+      
+      // receive deviceID here will trigged frontend call
+      // TODO: send deviceID here to frontend
+      callstatus = 1;
+      ws.send(callstatus);
 
-      // publish call status to ros2 dds, 3 times, for ensurance
-      var pub_count = 0;
-      var pub_callend = setInterval(function(){
-        publish_acknowledgement(current_patient_id, Number(callstatus))
-        pub_count = pub_count + 1 ;
-        if (pub_count > 3){
-          clearInterval(pub_callend);
-        }
-      }, 500); 
-    }
-  })
+  
+      publish_acknowledgement( msg.data, 1 );	// acknowledgement of received triggered from patient
+  
+    });	
+  
+    
+    // publisher = node.createPublisher(SestoApiInfo, 'task_info');
+    patientDevice_pub = node.createPublisher(Acknowledgement_msg, '/patient_device/call_acknowledgement');
+    
+    console.log(" ------------ RCL Nodejs Init Successfully!!! ------------")
+    
+    rclnodejs.spin(node);
+  
+  });
 
+
+  // Remove setInterval
   var send_ws = setInterval(
     function(){
 
@@ -112,6 +117,7 @@ wss.on('connection', function (ws) {
         clearInterval(send_ws);
       }
       else{
+		// TODO: send DeviceID only when msg is receive.
         console.log("[WS]:: - Sending ws msg to frontend: ", callstatus)
         ws.send(callstatus);
       }
