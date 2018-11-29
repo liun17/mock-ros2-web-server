@@ -71,8 +71,8 @@
 
       let url = document.createElement("a");
       url.href = window.location.href;
-      console.log(url.search);
       var ws = new WebSocket('ws://' + url.hostname + ':8888/ws');
+      console.log(url.search);
       
       // Button endcall function
       function EndCall(){
