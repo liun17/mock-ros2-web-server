@@ -102,6 +102,7 @@ wss.on('connection', function (ws) {
     // ---------- Received end call msg from front end ---------------
     else if ( newClient == obj.Device_id && obj.Status == 0 ){
       console.log('[WS]::Received call end msg for : %s', obj.Device_id)
+      active_client_list.splice(active_client_list.indexOf(obj.Device_id), 1); // remove ele from list
 
       // publish call status to ros2 dds, 3 times, for ensurance
       var pub_count = 0;
