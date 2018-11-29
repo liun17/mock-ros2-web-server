@@ -95,8 +95,9 @@
       }
 
       // When Receive web socket msg
-      ws.onmessage = function (ev) {
-        let received_device_id = ev.data;
+      ws.onmessage = function (msg) {
+
+        let received_device_id = msg.data;
 
         // TODO: check mapping of caller ID, with json stringify
         console.log("received from ws: ", received_device_id);
