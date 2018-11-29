@@ -37,6 +37,7 @@ let patientDevice_pub = -1;
 let pending_client_list = new Array(); // client waiting to be sent websocket 'call signal'
 let active_client_list = new Array();
 let new_activeClient = -1;   // newest frontend client to establish a call
+let pending_count = 0;
 
 
 // ==============================  RCLNodejs stuffs  ==============================
@@ -99,6 +100,7 @@ wss.on('connection', function (ws) {
       // get new client device_id from pending to active list
       pending_client_list.splice(pending_client_list.indexOf(new_activeClient), 1); // remove ele from list
       active_client_list.push( new_activeClient );
+      pending_count = 0;
     }
 
     // ---------- Received end call msg from front end ---------------
@@ -133,13 +135,22 @@ wss.on('connection', function (ws) {
         clearInterval(sender_ws);
       }
       else{
+        // pending client to be converted to a active call
         if( pending_client_list.length != 0 ){
           new_activeClient = pending_client_list[pending_client_list.length - 1];
           console.log("[WS]:: - Sending ws 'startCall' msg to frontend client: ", new_activeClient)
           ws.send(JSON.stringify({
             Device_id: new_activeClient,
             Status: 1     // 1: call
-          }));          
+          }));
+          pending_count = pending_count + 1;           
+        }
+
+        // remove atempting device id from pending list, (tried too many times....)
+        if (pending_count > 5){
+          pending_client_list.splice(pending_client_list.indexOf(new_activeClient), 1); // remove ele from list
+          console.log("[WS]:: Exceeded pending count!!!! stop trying for device_id: ", new_activeClient);
+          pending_count = 0;
         }
       }
     },
