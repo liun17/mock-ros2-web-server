@@ -1,6 +1,7 @@
 /*
 * Created: Testing for RMF Project (Tan You Liang), Nov 2018
-* Usage: Establish a webserver for ROS2 to nodejs communication with DDS protocol
+* Usage: Establish a webserver for ROS2 to nodejs communication with DDS protocol, 
+*        websocket is used for front-backend tcp communication
 *
 * Folder struct:
 *  - Dir/
@@ -9,6 +10,9 @@
 *		- node_modules/
 *		- mock_server.js
 *		- patient_display.html
+*
+*
+* call status 0: no call, 1: trigger call
 *
 */
 
@@ -28,13 +32,11 @@ let ack_msg = new Acknowledgement_msg();
 // Global publisher 
 let publisher = -1;
 let patientDevice_pub = -1;
-let current_patient_id = 'AAAA';
 
 // call related var
-let callstatus = 0;   // FOR FRONTEND -> 0: no call, 1: trigger call
 let pending_client_list = new Array(); // client waiting to be sent websocket 'call signal'
 let active_client_list = new Array();
-let newClient = -1;
+let new_activeClient = -1;   // newest frontend client to establish a call
 
 
 // ==============================  RCLNodejs stuffs  ==============================
@@ -92,15 +94,15 @@ wss.on('connection', function (ws) {
     var obj = JSON.parse(msg);
 
     // --------- Received acknowledgement from front end -----------
-    if (newClient == obj.Device_id && obj.Status == 1 ){
+    if (new_activeClient == obj.Device_id && obj.Status == 1 ){
       console.log('[WS]::Received call started msg for : %s', obj.Device_id)
       // get new client device_id from pending to active list
-      pending_client_list.splice(pending_client_list.indexOf(newClient), 1); // remove ele from list
-      active_client_list.push( newClient );
+      pending_client_list.splice(pending_client_list.indexOf(new_activeClient), 1); // remove ele from list
+      active_client_list.push( new_activeClient );
     }
 
     // ---------- Received end call msg from front end ---------------
-    else if ( newClient == obj.Device_id && obj.Status == 0 ){
+    else if ( active_client_list.indexOf(obj.Device_id) != -1 && obj.Status == 0 ){
       console.log('[WS]::Received call end msg for : %s', obj.Device_id)
       active_client_list.splice(active_client_list.indexOf(obj.Device_id), 1); // remove ele from list
 
@@ -132,10 +134,10 @@ wss.on('connection', function (ws) {
       }
       else{
         if( pending_client_list.length != 0 ){
-          newClient = pending_client_list[pending_client_list.length - 1];
-          console.log("[WS]:: - Sending ws 'startCall' msg to frontend client: ", newClient)
+          new_activeClient = pending_client_list[pending_client_list.length - 1];
+          console.log("[WS]:: - Sending ws 'startCall' msg to frontend client: ", new_activeClient)
           ws.send(JSON.stringify({
-            Device_id: newClient,
+            Device_id: new_activeClient,
             Status: 1     // 1: call
           }));          
         }
@@ -185,7 +187,7 @@ app.get('/ack/:status', function(req, res) {
 		return;
 	}
 	callstatus = Number(Number(ch));
-	publish_acknowledgement(current_patient_id, Number(ch))
+	publish_acknowledgement('AAAA', Number(ch))
 });
 
 app.listen( 5000 ,function(){
