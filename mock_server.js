@@ -87,8 +87,10 @@ wss.on('connection', function (ws) {
   ws.on('message', function (msg) {
     console.log('[WS]::Received Msg from frontend: %s', msg)
     
-    var obj = JSON.parse(msg.data);
+    var obj = JSON.parse(msg);
     let message = obj.Device_id;  //for now
+
+    console.log("[WS]::Received id: ", message);
 
     if (newClient == message){
       // get new client device_id from pending to active list
@@ -129,8 +131,8 @@ wss.on('connection', function (ws) {
           newClient = pending_client_list[pending_client_list.length - 1];
           console.log("[WS]:: - Sending ws 'startCall' msg to frontend client: ", newClient)
           ws.send(JSON.stringify({
-            Device_id: newClient,
-            Status: 1     // 1: call
+            Device_id:newClient,
+            Status:1     // 1: call
           }));          
         }
       }

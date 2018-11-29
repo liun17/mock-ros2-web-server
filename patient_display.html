@@ -93,8 +93,8 @@
       ws.onopen = function () {
           console.log('websocket is connected ...')
           ws.send(JSON.stringify({
-            Device_id: device_id,
-            Status: 0     // 0: idle
+            Device_id:device_id,
+            Status:0     // 0: idle
           }));
       }
 
@@ -107,7 +107,7 @@
         let received_device_id = obj.Device_id;
 
         // ============== NOTIFY START CALL ================
-        console.log("received from ws: ", received_device_id);
+        console.log("received from ws: {%s} ", received_device_id);
         if (received_device_id == device_id && (is_calling == false) ){
           
           ws.send(JSON.stringify({
