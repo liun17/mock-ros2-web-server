@@ -56,9 +56,11 @@ rclnodejs.init().then(() => {
 		console.log("[Subcriber]:: received msg at /caller_id of: ", msg.data)
 		current_patient_id = msg.data;
     
-    // receive deviceID here will trigged frontend call
-    // TODO: need match deviceID to frontend
-    pending_client_list.push( current_patient_id );
+    // check if new 'caller_id ' is captured before
+    if ( (pending_client_list.indexOf(msg.data) != -1) && (pending_client_list.indexOf(msg.data) != -1) ){
+      // receive deviceID here will trigged frontend call
+      pending_client_list.push( msg.data );
+    }
 
     publish_acknowledgement( msg.data, 1 );	// acknowledgement of received triggered from patient
 
@@ -85,34 +87,35 @@ wss.on('connection', function (ws) {
   
   // When front end update status to backend
   ws.on('message', function (msg) {
-    console.log('[WS]::Received Msg from frontend: %s', msg)
+    console.log('[WS]:: Msg from frontend: %s', msg)
     
     var obj = JSON.parse(msg);
-    let message = obj.Device_id;  //for now
 
-    console.log("[WS]::Received id: ", message);
-
-    if (newClient == message){
+    // --------- Received acknowledgement from front end -----------
+    if (newClient == obj.Device_id && obj.Status == 1 ){
+      console.log('[WS]::Received call started msg for : %s', obj.Device_id)
       // get new client device_id from pending to active list
       pending_client_list.splice(pending_client_list.indexOf(newClient), 1); // remove ele from list
       active_client_list.push( newClient );
     }
 
-    //if its a number, juz for safety
-    if ( !Number.isNaN( Number(message) ) ){
-      console.log('[WS]::Received a number: %s', message)
-      callstatus = Number(message);
+    // ---------- Received end call msg from front end ---------------
+    else if ( newClient == obj.Device_id && obj.Status == 0 ){
+      console.log('[WS]::Received call end msg for : %s', obj.Device_id)
 
       // publish call status to ros2 dds, 3 times, for ensurance
       var pub_count = 0;
       var pub_callend = setInterval(function(){
-        publish_acknowledgement(current_patient_id, Number(callstatus))
+        publish_acknowledgement(obj.Device_id, Number(obj.Status))
         pub_count = pub_count + 1 ;
-        if (pub_count > 3){
-          clearInterval(pub_callend);
-        }
+        if (pub_count > 3) clearInterval(pub_callend);
       }, 500); 
     }
+
+    else{
+      console.log("ERROR!!!! Weird msg received from front end!");
+    }
+
   })
 
   // activate sender every set interval
@@ -131,8 +134,8 @@ wss.on('connection', function (ws) {
           newClient = pending_client_list[pending_client_list.length - 1];
           console.log("[WS]:: - Sending ws 'startCall' msg to frontend client: ", newClient)
           ws.send(JSON.stringify({
-            Device_id:newClient,
-            Status:1     // 1: call
+            Device_id: newClient,
+            Status: 1     // 1: call
           }));          
         }
       }

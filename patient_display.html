@@ -73,12 +73,17 @@
       var ws = new WebSocket('ws://' + url.hostname + ':8888/ws');
       
       let device_id = url.search.replace('?',''); // print "?DEVICE_ID"
-      console.log("device id from url: ", device_id);
+      console.log(" -- Device id from url: ", device_id);
       
       // Button endcall function
       function EndCall(){
-        console.log("End Call");
-        ws.send(0);
+        console.log(" End Call ");
+        
+        ws.send(JSON.stringify({
+          Device_id: device_id,
+          Status: 0     // 0: idle or end the call
+        }));        
+        
         document.getElementById("image").src = "static/cgh_logo.jpg"
         document.getElementById("endcall_btn").innerHTML= "";
         status = 0;
@@ -93,8 +98,8 @@
       ws.onopen = function () {
           console.log('websocket is connected ...')
           ws.send(JSON.stringify({
-            Device_id:device_id,
-            Status:0     // 0: idle
+            Device_id: device_id,
+            Status: 0     // 0: idle
           }));
       }
 
@@ -103,16 +108,16 @@
 
         var obj = JSON.parse(msg.data);
         
-        
         let received_device_id = obj.Device_id;
+        let status_command = obj.Status;
 
-        // ============== NOTIFY START CALL ================
-        console.log("received from ws: {%s} ", received_device_id);
-        if (received_device_id == device_id && (is_calling == false) ){
+        // =========================== NOTIFY START CALL =========================
+        console.log("received from ws: ", received_device_id);
+        if (received_device_id == device_id && is_calling == false ){
           
           ws.send(JSON.stringify({
             Device_id: device_id,
-            Status: 0     // 0: idle
+            Status: 1     // 1: start call
           }));
 
           console.log("---- Start Call ------ for device: ", received_device_id);
@@ -121,11 +126,11 @@
           is_calling = true
         }
 
-        // ============== NOTIFY END CALL , from backend ================
 
-        // if ( status == 0){
-        //   EndCall();
-        // }
+        // ======================= NOTIFY END CALL , from backend ===================
+        if (received_device_id == device_id && status_command == 0){
+          EndCall();
+        }
       }
 
     </script>
