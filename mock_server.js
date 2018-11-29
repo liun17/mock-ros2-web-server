@@ -40,24 +40,24 @@ ws = new WebSocketServer({port: 8888, path: "/ws"})
 ws.on('connection', function (ws) {
   console.log(' Websocket port 8888 is connected ...');
   
-  // Remove setInterval
-  var send_ws = setInterval(
-    function(){
-      // check if websocket is closed
-      // -- mode: CONNECTING, OPEN, CLOSING, CLOSED
-      if(ws.readyState === ws.CLOSED){
-        // Do your stuff...
-        console.log("[WS]::Websocket port is closed")
-        clearInterval(send_ws);
-      }
-      else{
-		// TODO: send DeviceID only when msg is receive.
-        console.log("[WS]:: - Sending ws msg to frontend: ", callstatus)
-        ws.send(callstatus);
-      }
-    },
-    1000
-  )
+  // // Remove setInterval
+  // var send_ws = setInterval(
+  //   function(){
+  //     // check if websocket is closed
+  //     // -- mode: CONNECTING, OPEN, CLOSING, CLOSED
+  //     if(ws.readyState === ws.CLOSED){
+  //       // Do your stuff...
+  //       console.log("[WS]::Websocket port is closed")
+  //       clearInterval(send_ws);
+  //     }
+  //     else{
+	// 	// TODO: send DeviceID only when msg is receive.
+  //       console.log("[WS]:: - Sending ws msg to frontend: ", callstatus)
+  //       ws.send(callstatus);
+  //     }
+  //   },
+  //   1000
+  // )
 })
 
 
