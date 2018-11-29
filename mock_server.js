@@ -29,104 +29,111 @@ let ack_msg = new Acknowledgement_msg();
 let publisher = -1;
 let patientDevice_pub = -1;
 let current_patient_id = 'AAAA';
+
+// call related var
 let callstatus = 0;   // FOR FRONTEND -> 0: no call, 1: trigger call
+let pending_client_list = new Array(); // client waiting to be sent websocket 'call signal'
+let active_client_list = new Array();
+let newClient = -1;
 
-
-
-// ==============================  Websocket stuffs  ==============================
-
-ws = new WebSocketServer({port: 8888, path: "/ws"})
-
-ws.on('connection', function (ws) {
-  console.log(' Websocket port 8888 is connected ...');
-  
-  // // Remove setInterval
-  // var send_ws = setInterval(
-  //   function(){
-  //     // check if websocket is closed
-  //     // -- mode: CONNECTING, OPEN, CLOSING, CLOSED
-  //     if(ws.readyState === ws.CLOSED){
-  //       // Do your stuff...
-  //       console.log("[WS]::Websocket port is closed")
-  //       clearInterval(send_ws);
-  //     }
-  //     else{
-	// 	// TODO: send DeviceID only when msg is receive.
-  //       console.log("[WS]:: - Sending ws msg to frontend: ", callstatus)
-  //       ws.send(callstatus);
-  //     }
-  //   },
-  //   1000
-  // )
-})
-
-
-// When front end update status to backend
-ws.on('message', function (message) {
-  
-  console.log('[WS]::Received Msg from frontend: %s', message)
-  
-  //if its a number, juz for safety
-  if ( !Number.isNaN( Number(message) ) ){
-    console.log('[WS]::Received a number: %s', message)
-    callstatus = Number(message);
-
-    // publish call status to ros2 dds, 3 times, for ensurance
-    var pub_count = 0;
-    var pub_callend = setInterval(function(){
-      publish_acknowledgement(current_patient_id, Number(callstatus))
-      pub_count = pub_count + 1 ;
-      if (pub_count > 3){
-        clearInterval(pub_callend);
-      }
-    }, 500); 
-  }
-})
-  
 
 // ==============================  RCLNodejs stuffs  ==============================
 
 function publish_acknowledgement(ID, status) {
-  ack_msg.status = status
-  ack_msg.deviceid = ID
-  patientDevice_pub.publish(ack_msg);
-  console.log("[Publisher]:: Published to /call_acknowledgment"); 
-  console.log("\t\t ID: ", ID, "  status: ", status); 
+	ack_msg.status = status
+	ack_msg.deviceid = ID
+	patientDevice_pub.publish(ack_msg);
+	console.log("[Publisher]:: Published to /call_acknowledgment"); 
+	console.log("\t\t ID: ", ID, "  status: ", status); 
 }
 
 rclnodejs.init().then(() => {
-  
-  const node = rclnodejs.createNode('mock_web_server');
-  
-  // Sub for patient device: caller id
-  node.createSubscription(String, '/patient_device/caller_id', (msg) => {
-    console.log("[Subcriber]:: received msg at /caller_id of: ", msg.data)
-    current_patient_id = msg.data;
+	
+	const node = rclnodejs.createNode('mock_web_server');
+	
+	// Sub for patient device: caller id
+	node.createSubscription(String, '/patient_device/caller_id', (msg) => {
+		console.log("[Subcriber]:: received msg at /caller_id of: ", msg.data)
+		current_patient_id = msg.data;
     
     // receive deviceID here will trigged frontend call
-    // TODO: send deviceID here to frontend
-    callstatus = 1;
-    ws.send(callstatus);
-    if(ws.readyState !== ws.CLOSED){  //if websocket is not closed
-      console.log('[WS]::send msg to client ',  message)
-      ws.send(callstatus);
-    }
+    // TODO: need match deviceID to frontend
+    pending_client_list.push( current_patient_id );
 
     publish_acknowledgement( msg.data, 1 );	// acknowledgement of received triggered from patient
 
   });	
 
-  
-  // publisher = node.createPublisher(SestoApiInfo, 'task_info');
-  patientDevice_pub = node.createPublisher(Acknowledgement_msg, '/patient_device/call_acknowledgement');
-  
-  console.log(" ------------ RCL Nodejs Init Successfully!!! ------------")
-  
-  rclnodejs.spin(node);
+	
+	// publisher = node.createPublisher(SestoApiInfo, 'task_info');
+	patientDevice_pub = node.createPublisher(Acknowledgement_msg, '/patient_device/call_acknowledgement');
+	
+	console.log(" ------------ RCL Nodejs Init Successfully!!! ------------")
+	
+	rclnodejs.spin(node);
 
 });
 
 
+
+
+// ==============================  Websocket stuffs  ==============================
+
+wss = new WebSocketServer({port: 8888, path: "/ws"})
+
+wss.on('connection', function (ws) {
+  
+  // When front end update status to backend
+  ws.on('message', function (message) {
+    console.log('[WS]::Received Msg from frontend: %s', message)
+    
+    if (newClient == message){
+      // get new client device_id from pending to active list
+      pending_client_list.splice(pending_client_list.indexOf(newClient), 1); // remove ele from list
+      active_client_list.push( newClient );
+    }
+
+    //if its a number, juz for safety
+    if ( !Number.isNaN( Number(message) ) ){
+      console.log('[WS]::Received a number: %s', message)
+      callstatus = Number(message);
+
+      // publish call status to ros2 dds, 3 times, for ensurance
+      var pub_count = 0;
+      var pub_callend = setInterval(function(){
+        publish_acknowledgement(current_patient_id, Number(callstatus))
+        pub_count = pub_count + 1 ;
+        if (pub_count > 3){
+          clearInterval(pub_callend);
+        }
+      }, 500); 
+    }
+  })
+
+  // activate sender every set interval
+  var sender_ws = setInterval(
+    function(){
+
+      // check if websocket is closed
+      // -- mode: CONNECTING, OPEN, CLOSING, CLOSED
+      if(ws.readyState === ws.CLOSED){
+        // Do your stuff...
+        console.log("[WS]::Websocket port is closed")
+        clearInterval(sender_ws);
+      }
+      else{
+        if( pending_client_list.length != 0 ){
+          newClient = pending_client_list[my_array.length - 1];
+          console.log("[WS]:: - Sending ws 'startCall' msg to frontend client: ", newClient)
+          // pending_client_list.splice(pending_client_list.indexOf(newClient), 1); // remove lastclient to list
+          // active_client_list.push( newClient );
+          ws.send(newClient);          
+        }
+      }
+    },
+    500
+  )
+})
 
 
 
