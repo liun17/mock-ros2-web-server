@@ -123,10 +123,8 @@ wss.on('connection', function (ws) {
       }
       else{
         if( pending_client_list.length != 0 ){
-          newClient = pending_client_list[my_array.length - 1];
+          newClient = pending_client_list[pending_client_list.length - 1];
           console.log("[WS]:: - Sending ws 'startCall' msg to frontend client: ", newClient)
-          // pending_client_list.splice(pending_client_list.indexOf(newClient), 1); // remove lastclient to list
-          // active_client_list.push( newClient );
           ws.send(newClient);          
         }
       }
