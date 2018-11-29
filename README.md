@@ -109,7 +109,9 @@ node mock_server.js
 
 Here, open another terminal with ros2 environment being setup. Test the server by pub sub to `ros2 topic`. 
 
-Check IP via `ifconfig`, then access this via web browser:  `http://172.17.0.2:5000/patient`
+Check IP via `ifconfig`, then access this via web browser:  `http://172.17.0.2:5000/patient`. 
+
+For multiple devices, appropriate 'device_id' need to map to the accessing frontend webpage. Thus, to initiate the 'device_id' of the webpage, Just type `http://172.17.0.2:5000/patient?DEVICE_ID`. the `DEVICE_ID` here should be the same as the caller_id of the ROS2 Publisher.
 
 When ros2 topic: `/patient_device/caller_id` sub msg is received, frontend (webpage) will display img of "call mode", and provide acknowledgement msg of '1' to `/patient_device/call_acknowledgement` ros2 topic.
 
