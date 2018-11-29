@@ -37,7 +37,7 @@ let callstatus = 0;   // FOR FRONTEND -> 0: no call, 1: trigger call
 
 ws = new WebSocketServer({port: 8888, path: "/ws"})
 
-ws.onopen = function () {
+ws.on('connection', function (ws) {
   console.log(' Websocket port 8888 is connected ...');
   
   // // Remove setInterval
@@ -58,14 +58,12 @@ ws.onopen = function () {
   //   },
   //   1000
   // )
-}
+})
 
 
 // When front end update status to backend
-ws.onmessage = function (msg) {
+ws.on('message', function (message) {
   
-  let message = msg.data;
-
   console.log('[WS]::Received Msg from frontend: %s', message)
   
   //if its a number, juz for safety
@@ -83,7 +81,7 @@ ws.onmessage = function (msg) {
       }
     }, 500); 
   }
-}
+})
   
 
 // ==============================  RCLNodejs stuffs  ==============================
@@ -110,7 +108,7 @@ rclnodejs.init().then(() => {
     callstatus = 1;
     ws.send(callstatus);
     if(ws.readyState !== ws.CLOSED){  //if websocket is not closed
-      console.log('[WS]::send msg to client ',  callstatus)
+      console.log('[WS]::send msg to client ',  message)
       ws.send(callstatus);
     }
 
