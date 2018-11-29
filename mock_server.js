@@ -107,6 +107,7 @@ rclnodejs.init().then(() => {
     // TODO: send deviceID here to frontend
     callstatus = 1;
     if(ws.readyState !== ws.CLOSED){  //if websocket is not closed
+      console.log('[WS]::send msg to client ',  callstatus)
       ws.send(callstatus);
     }
 
