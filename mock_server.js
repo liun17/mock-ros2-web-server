@@ -57,7 +57,7 @@ rclnodejs.init().then(() => {
 		current_patient_id = msg.data;
     
     // check if new 'caller_id ' is captured before
-    if ( (pending_client_list.indexOf(msg.data) == -1) && (pending_client_list.indexOf(msg.data) == -1) ){
+    if ( (pending_client_list.indexOf(msg.data) == -1) && (active_client_list.indexOf(msg.data) == -1) ){
       // receive deviceID here will trigged frontend call
       pending_client_list.push( msg.data );
     }
