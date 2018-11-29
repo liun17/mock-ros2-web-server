@@ -113,7 +113,7 @@ wss.on('connection', function (ws) {
     }
 
     else{
-      console.log("ERROR!!!! Weird msg received from front end! \n\t Maybe is new inative client");
+      console.log("ERROR!!!! Weird msg received from front end! \n\t Maybe is new inative client =) \n");
     }
 
   })
