@@ -4,7 +4,7 @@
 <style>
   h2 {
     color: #051B66;
-    font-size: 40px;
+    font-size: 36px;
     text-align: center;
     font-weight: bold;
     font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
@@ -40,7 +40,7 @@
 
 
 
-<h2>Tan De Mo</h2>
+<h2 id="title" >Tan De Mo</h2>
   <body>
     <div>
       <p id="href"></p>
@@ -74,7 +74,8 @@
       
       let device_id = url.search.replace('?',''); // print "?DEVICE_ID"
       console.log(" -- Device id from url: ", device_id);
-      
+      document.getElementById("title").innerHTML = "Device ID: " + device_id;
+
       // Button endcall function
       function EndCall(){
         console.log(" End Call ");

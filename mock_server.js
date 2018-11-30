@@ -135,13 +135,13 @@ wss.on('connection', function (ws) {
         clearInterval(sender_ws);
       }
       else{
-        // pending client to be converted to a active call
+        // pending client to be converted to an active call
         if( pending_client_list.length != 0 ){
           new_activeClient = pending_client_list[pending_client_list.length - 1];
           console.log("[WS]:: - Sending ws 'startCall' msg to frontend client: ", new_activeClient)
           ws.send(JSON.stringify({
             Device_id: new_activeClient,
-            Status: 1     // 1: call
+            Status: 1     // 1: call (command)
           }));
           pending_count = pending_count + 1;           
         }
@@ -152,6 +152,9 @@ wss.on('connection', function (ws) {
           console.log("[WS]:: Exceeded pending count!!!! stop trying for device_id: ", new_activeClient);
           pending_count = 0;
         }
+
+        // TODO: If END CALL FROM other party (webrtc call)
+        // // send status: 0 to front end, so to end their call too
       }
     },
     500
@@ -164,6 +167,7 @@ wss.on('connection', function (ws) {
 
 app.use(express.json());
 app.use(express.static(__dirname + '/js'));
+
 
 app.use('/home', function (req, res) {
 	console.log("load main page");
@@ -180,14 +184,6 @@ app.use('/patient', function (req, res) {
 // for all static files in /static folder
 app.use('/static', express.static(__dirname + '/static/'));
 
-// This is for testing, send interval msg to /call_acknowledgement
-app.get('/send', function (req, res) {
-	console.log("submit /send/ status msg being called!!")
-	setInterval(function(){ 
-		console.log("INTERVAL MODE"); 
-		publish_acknowledgement("AAAA", -1);
-	}, 3000);
-});
 
 // Manually provide acknowledgement
 app.get('/ack/:status', function(req, res) {
@@ -201,57 +197,7 @@ app.get('/ack/:status', function(req, res) {
 	publish_acknowledgement('AAAA', Number(ch))
 });
 
+
 app.listen( 5000 ,function(){
 	console.log(" Node Server running at port " + 5000);
 });
-
-
-
-
-
-
-
-
-// ============================== Back Up Reference Code ================================
-
-// msg1.method = "createAdhocRequest";
-// msg1.user_id = 1234;
-// msg1.pickup = "";
-// msg1.delivery = "";
-// msg1.payloads = ["ITEM" + new Date().toISOString()];
-// msg1.type = 0;
-// msg1.start_time = new Date().toISOString().replace(/T/, ' ').replace(/\..+/, '');
-// msg1.delivery_end = 30;
-// msg1.agv_id = 0;
-// msg1.req_id = 0;
-// msg1.requests = []
-
-// app.use('/submit_status_msg', function (req, res) {
-// 	msg1.method = "getUserReqStates";
-// 	msg1.requests = []
-// 	publisher.publish(msg1);
-// 	res.json('Status Request Submitted');
-// 	console.log("submit status msg being called!!")
-// });
-
-// app.use('/submit_task_msg', function (req, res) {
-	// 	msg1.method = "createAdhocRequest";
-	// 	msg1.payloads = ["ITEM" + Date.now().toString().substring(8, 15)];
-// 	msg1.start_time = new Date().toISOString().replace(/T/, ' ').replace(/\..+/, '');
-// 	all_messages = req.body;
-// 	for (var i = 0; i < all_messages.length; i++) {
-	// 		console.log(all_messages[i].name + '  :  ' + all_messages[i].value);
-	// 		if (all_messages[i].name == "pickup") {
-		// 			//spec.fields.pickup=all_messages[i].value;
-		// 			msg1.pickup = all_messages[i].value;
-		// 			console.log("pickup" + msg1.pickup);
-		// 		}
-		// 		else if (all_messages[i].name == "delivery") {
-			// 			msg1.delivery = all_messages[i].value;
-// 			console.log("delivery" + msg1.delivery);
-// 		}
-// 		msg.data = all_messages[i].value;
-// 	}
-// 	publisher.publish(msg1);
-// 	res.json('Request Submitted, yayyyyyy!!!!!!!');
-// });
