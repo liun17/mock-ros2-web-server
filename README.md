@@ -111,7 +111,10 @@ Here, open another terminal with ros2 environment being setup. Test the server b
 
 Check IP via `ifconfig`, then access this via web browser:  `http://172.17.0.2:5000/patient`. 
 
-For multiple devices, appropriate 'device_id' need to map to the accessing frontend webpage. Thus, to initiate the 'device_id' of the webpage, Just type `http://172.17.0.2:5000/patient?DEVICE_ID`. the `DEVICE_ID` here should be the same as the caller_id of the ROS2 Publisher.
+For multiple devices, appropriate 'device_id' need to map to the accessing frontend webpage. Thus, to initiate the 'device_id' of the webpage, Just type in a web browser
+
+```http://172.17.0.2:5000/patient?DEVICE_ID```
+* the `DEVICE_ID` here should be the same as the 'caller_id' of the ROS2 Publisher.
 
 When ros2 topic: `/patient_device/caller_id` sub msg is received, frontend (webpage) will display img of "call mode", and provide acknowledgement msg of '1' to `/patient_device/call_acknowledgement` ros2 topic.
 
@@ -127,8 +130,8 @@ When "End Call" button on webpage is hit, frontend (webpage) will display img of
 - the patient call button will trigger this whole call proccess via ros2 dds and websocket
 - Eventually `WEBRTC` will be used for video call
 
-* Tried with docker, but the problem is the network IP between external devices while using ROS2. ` --network=host` solves this.
-* So it's recommendable to use `Ubuntu 18` with RCLNODEJS installed, and run the server without a virtual container.
+* To solve IP network problem between external devices while using ROS2 in a container, use arg ` --network=host`.
+* Without container, it's recommendable to use `Ubuntu 18` with RCLNODEJS installed, and run the node server.
 
 
 
