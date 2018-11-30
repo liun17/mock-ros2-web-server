@@ -111,9 +111,12 @@ Here, open another terminal with ros2 environment being setup. Test the server b
 
 Check IP via `ifconfig`, then access this via web browser:  `http://172.17.0.2:5000/patient`. 
 
-For multiple devices, appropriate 'device_id' need to map to the accessing frontend webpage. Thus, to initiate the 'device_id' of the webpage, Just type in a web browser
+For multiple devices, appropriate 'device_id' need to map to the accessing frontend webpage. Thus, to initiate the 'device_id' of the webpage, Just use this url:
 
-```http://172.17.0.2:5000/patient?DEVICE_ID```
+```
+http://172.17.0.2:5000/patient?DEVICE_ID  # in web browser
+```
+
 * the `DEVICE_ID` here should be the same as the 'caller_id' of the ROS2 Publisher.
 
 When ros2 topic: `/patient_device/caller_id` sub msg is received, frontend (webpage) will display img of "call mode", and provide acknowledgement msg of '1' to `/patient_device/call_acknowledgement` ros2 topic.
