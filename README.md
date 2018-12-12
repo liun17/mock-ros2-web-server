@@ -64,6 +64,7 @@ node rclnodejs/script/generate_messages.js
 * cant `npm install` in ubuntu 16 with `ros2 ardent` binary installed
 * with ros2 bouncy's source being installed, prob still lies, cuz path too long, weird stuff happened
 * Ros2 topic communication between Ardent and bouncy seems to have some issue
+* If `colcon` is not available, `pip install python3-colcon-common-extensions`
 
 
 ## Setup via Docker
