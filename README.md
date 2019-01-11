@@ -44,7 +44,7 @@ npm install
 
 #### 3) Setup NodeJS, RCLNODEJS and ROS2
 
-a) Compile and source ROS2 .msg file 
+a) Compile and source ROS2 .msg file  (In this case, `patient_device`)
 ```
 cd .../ROS2_dir/src
 git clone XXXX
@@ -64,7 +64,7 @@ node rclnodejs/script/generate_messages.js
 * cant `npm install` in ubuntu 16 with `ros2 ardent` binary installed
 * with ros2 bouncy's source being installed, prob still lies, cuz path too long, weird stuff happened
 * Ros2 topic communication between Ardent and bouncy seems to have some issue
-
+* If `colcon` is not available, `pip install python3-colcon-common-extensions`
 
 
 ## Setup via Docker
@@ -77,7 +77,7 @@ Access this site: https://hub.docker.com/r/tanyouliang95/ros2-nodejs-mock/
 
 ```
 docker pull tanyouliang95/ros2-nodejs-mock
-docker run -it tanyouliang95/ros2-nodejs-mock
+docker run -it --network=host tanyouliang95/ros2-nodejs-mock
 cd /home/mock-ros2-web-server
 git pull  # ensure newest version
 ```
@@ -91,12 +91,20 @@ git pull  # ensure newest version
 Open a terminal, and `cd /home/mock-ros2-web-server`. Then run the the nodejs server:
 
 ```
-node mock-web-server.js
+node mock_server.js
 ```
 
 Here, open another terminal with ros2 environment being setup. Test the server by pub sub to `ros2 topic`. 
 
-Check IP via `ifconfig`, then access this via web browser:  `http://172.17.0.2:5000/patient`
+Check IP via `ifconfig`, then access this via web browser:  `http://172.17.0.2:5000/patient`. 
+
+For multiple devices, appropriate 'device_id' need to map to the accessing frontend webpage. Thus, to initiate the 'device_id' of the webpage, Just use this url:
+
+```
+http://172.17.0.2:5000/patient?DEVICE_ID  # in web browser
+```
+
+* the `DEVICE_ID` here should be the same as the 'caller_id' of the ROS2 Publisher.
 
 When ros2 topic: `/patient_device/caller_id` sub msg is received, frontend (webpage) will display img of "call mode", and provide acknowledgement msg of '1' to `/patient_device/call_acknowledgement` ros2 topic.
 
@@ -125,5 +133,9 @@ ros2 topic pub /patient_device/caller_id std_msgs/String "data: AAAA"
 - This package is mainly working along side with a patient call button, with light indicator
 - the patient call button will trigger this whole call proccess via ros2 dds and websocket
 - Eventually `WEBRTC` will be used for video call
+
+* To solve IP network problem between external devices while using ROS2 in a container, use arg ` --network=host`.
+* Without container, it's recommendable to use `Ubuntu 18` with RCLNODEJS installed, and run the node server.
+
 
 
