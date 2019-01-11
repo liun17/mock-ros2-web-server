@@ -2,6 +2,7 @@
 * Created: Testing for RMF Project (Tan You Liang), Nov 2018
 * Usage: Establish a webserver for front end communication without ros2 and rclnodejs setup
 *
+* Not supported currently
 */
 
 var express = require('express')
@@ -73,7 +74,3 @@ app.use('/static', express.static(__dirname + '/static/'));
 app.listen(3000, function () {
   console.log('Example app listening on port 3000!')
 })
-
-
-
-

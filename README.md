@@ -85,20 +85,6 @@ git pull  # ensure newest version
 
 ## Testing of Webserver
 
-**Subscribe Dummy Msg:**
-
-- To control publish status manually, use `http://172.17.0.2:5000/ack/{ANY NUMBER}`
-
-
-```
-ros2 topic echo /patient_device/call_acknowledgement
-```
-
-**Publish dummy msg:**
-
-```
-ros2 topic pub /patient_device/caller_id std_msgs/String "data: AAAA"
-```
 
 ### Procedure
 
@@ -117,6 +103,20 @@ When ros2 topic: `/patient_device/caller_id` sub msg is received, frontend (webp
 When "End Call" button on webpage is hit, frontend (webpage) will display img of "pending mode". Acknowledgement msg '0' will send to the `/patient_device/call_acknowledgement` ros2 topic, successfully end the call proccess.
 
 
+**Subscribe Dummy Msg:**
+
+- To control publish status manually, use `http://172.17.0.2:5000/ack/{ANY NUMBER}`
+
+
+```
+ros2 topic echo /patient_device/call_acknowledgement
+```
+
+**Publish dummy msg:**
+
+```
+ros2 topic pub /patient_device/caller_id std_msgs/String "data: AAAA"
+```
 
 ## Note
 
