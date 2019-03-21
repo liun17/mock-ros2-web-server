@@ -54,7 +54,7 @@ source install/local_setup.bash
 
 b) Generate Msg File in RCLNodejs
 ```
-node rclnodejs/script/generate_messages.js 
+node rclnodejs/scripts/generate_messages.js 
 ### nodejs msg will be generated according to available sys ros2 msg
 ```
 
