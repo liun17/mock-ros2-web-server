@@ -82,12 +82,14 @@ cd /home/mock-ros2-web-server
 git pull  # ensure newest version
 ```
 
-To save 
+To save (Open another terminal) 
 ```
-docker ps     ## check image id , e.g. c62f5ebf5839
+docker ps     ## check CONTAINER_ID , e.g. c62f5ebf5839
 docker commit -m "Commentssss..." -a 'you_liang' c62f5ebf5839 tanyouliang95/ros2-nodejs
 docker history tanyouliang95/ros2-nodejs  # check commits
 ```
+
+* ~ to exit docker: ctrl-p, then ctrl-q*
 
 ## Testing of Webserver
 
