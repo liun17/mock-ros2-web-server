@@ -85,8 +85,8 @@ git pull  # ensure newest version
 To save 
 ```
 docker ps     ## check image id , e.g. c62f5ebf5839
-docker commit -m "Commentssss..." -a 'you_liang' c62f5ebf5839 batman22/ros2-nodejs
-docker history batman22/ros2-nodejs  # check commits
+docker commit -m "Commentssss..." -a 'you_liang' c62f5ebf5839 tanyouliang95/ros2-nodejs
+docker history tanyouliang95/ros2-nodejs  # check commits
 ```
 
 ## Testing of Webserver
